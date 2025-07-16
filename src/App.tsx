@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect } from 'react'
 import './App.css'
 
 function App() {
@@ -6,7 +6,6 @@ function App() {
   const [timePeriod, setTimePeriod] = useState('last-7-days')
   const [sourceFilter, setSourceFilter] = useState('all-sources')
   const [selectedArticles, setSelectedArticles] = useState<string[]>([])
-  const [expandedArticles, setExpandedArticles] = useState<string[]>([])
   const [articleStatus, setArticleStatus] = useState<Record<string, 'pending' | 'verified' | 'discarded'>>({})
   const [openDropdowns, setOpenDropdowns] = useState<string[]>([])
   const [editingArticles, setEditingArticles] = useState<string[]>([])
@@ -60,8 +59,6 @@ function App() {
     setArticleData(mockArticles)
   }, [])
 
-  // Removed totalArticles calculation since we no longer need it
-
   const handleArticleSelection = (articleId: string) => {
     setSelectedArticles(prev => 
       prev.includes(articleId) 
@@ -69,28 +66,6 @@ function App() {
         : [...prev, articleId]
     )
   }
-
-  const handleSelectAll = () => {
-    if (selectedArticles.length === articleData.length) {
-      setSelectedArticles([])
-    } else {
-      setSelectedArticles(articleData.map(article => article.id))
-    }
-  }
-
-  const handleClearSelection = () => {
-    setSelectedArticles([])
-  }
-
-  const toggleArticleExpansion = (articleId: string) => {
-    setExpandedArticles(prev => 
-      prev.includes(articleId) 
-        ? prev.filter(id => id !== articleId)
-        : [...prev, articleId]
-    )
-  }
-
-
 
   const getArticleStatus = (articleId: string) => {
     return articleStatus[articleId] || 'pending'
@@ -319,9 +294,6 @@ function App() {
                     <button className="email-report-btn" disabled={selectedArticles.length === 0}>
                       📧 Generate Email Report
                     </button>
-                    <button className="clear-btn" onClick={handleClearSelection}>
-                      ❌ Clear
-                    </button>
                   </div>
                 </div>
               </div>
@@ -356,13 +328,6 @@ function App() {
                           readOnly={!isArticleInEditMode(article.id)}
                           className={isArticleInEditMode(article.id) ? 'editable' : 'readonly'}
                         />
-                        <button 
-                          className="edit-save-btn"
-                          onClick={() => toggleEditMode(article.id)}
-                          title={isArticleInEditMode(article.id) ? 'Save changes' : 'Edit title'}
-                        >
-                          {isArticleInEditMode(article.id) ? '✅' : '✏️'}
-                        </button>
                       </div>
                     </div>
                     
@@ -376,18 +341,15 @@ function App() {
                           rows={2}
                           className={isArticleInEditMode(article.id) ? 'editable' : 'readonly'}
                         />
-                        <button 
-                          className="edit-save-btn"
-                          onClick={() => toggleEditMode(article.id)}
-                          title={isArticleInEditMode(article.id) ? 'Save changes' : 'Edit AI summary'}
-                        >
-                          {isArticleInEditMode(article.id) ? '✅' : '✏️'}
-                        </button>
                       </div>
                     </div>
                     
-                    <div className="article-actions">
-                      <button className="link-btn">🔗 View Original</button>
+                    <div className="article-actions" style={{ 
+                      display: 'flex', 
+                      alignItems: 'center', 
+                      gap: '12px',
+                      marginTop: '16px'
+                    }}>
                       <div className="verification-section">
                         <div className="relative inline-block text-left">
                           {/* Button Group */}
@@ -472,16 +434,69 @@ function App() {
                           )}
                         </div>
                       </div>
+                      <button 
+                        className="link-btn"
+                        style={{
+                          minWidth: '120px',
+                          padding: '8px 16px',
+                          backgroundColor: '#6b7280',
+                          color: 'white',
+                          border: 'none',
+                          borderRadius: '6px',
+                          fontSize: '14px',
+                          fontWeight: '500',
+                          cursor: 'pointer',
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '6px',
+                          transition: 'background-color 0.2s',
+                          textDecoration: 'none'
+                        }}
+                        onMouseEnter={(e) => {
+                          e.currentTarget.style.backgroundColor = '#4b5563'
+                        }}
+                        onMouseLeave={(e) => {
+                          e.currentTarget.style.backgroundColor = '#6b7280'
+                        }}
+                      >
+                        🔗 View Original
+                      </button>
+                      <button 
+                        className="edit-save-btn"
+                        onClick={() => toggleEditMode(article.id)}
+                        title={isArticleInEditMode(article.id) ? 'Save changes' : 'Edit article'}
+                        style={{
+                          minWidth: '80px',
+                          padding: '8px 16px',
+                          backgroundColor: isArticleInEditMode(article.id) ? '#10b981' : '#3b82f6',
+                          color: 'white',
+                          border: 'none',
+                          borderRadius: '6px',
+                          fontSize: '14px',
+                          fontWeight: '500',
+                          cursor: 'pointer',
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '6px',
+                          transition: 'background-color 0.2s'
+                        }}
+                        onMouseEnter={(e) => {
+                          e.currentTarget.style.backgroundColor = isArticleInEditMode(article.id) ? '#059669' : '#2563eb'
+                        }}
+                        onMouseLeave={(e) => {
+                          e.currentTarget.style.backgroundColor = isArticleInEditMode(article.id) ? '#10b981' : '#3b82f6'
+                        }}
+                      >
+                        <span>{isArticleInEditMode(article.id) ? '💾' : '✏️'}</span>
+                        {isArticleInEditMode(article.id) ? 'Save' : 'Edit'}
+                      </button>
                     </div>
                   </div>
                 </div>
               ))}
             </div>
 
-            {/* Load More Button */}
-            <div className="load-more-section">
-              <button className="load-more-btn">📄 Load More Articles...</button>
-            </div>
+
           </>
         )}
       </div>
