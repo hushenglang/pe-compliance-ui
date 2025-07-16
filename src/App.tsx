@@ -350,6 +350,56 @@ function App() {
                       gap: '12px',
                       marginTop: '16px'
                     }}>
+                      <button 
+                        className="link-btn"
+                        style={{
+                          minWidth: '120px',
+                          padding: '8px 16px',
+                          backgroundColor: '#6b7280',
+                          color: 'white',
+                          border: 'none',
+                          borderRadius: '6px',
+                          fontSize: '14px',
+                          fontWeight: '500',
+                          cursor: 'pointer',
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '6px',
+                          transition: 'background-color 0.2s',
+                          textDecoration: 'none'
+                        }}
+                        onMouseEnter={(e) => {
+                          e.currentTarget.style.backgroundColor = '#4b5563'
+                        }}
+                        onMouseLeave={(e) => {
+                          e.currentTarget.style.backgroundColor = '#6b7280'
+                        }}
+                      >
+                        🔗 View Original
+                      </button>
+                      <button 
+                        className="edit-save-btn"
+                        onClick={() => toggleEditMode(article.id)}
+                        title={isArticleInEditMode(article.id) ? 'Save changes' : 'Edit article'}
+                        style={{
+                          width: '90px',
+                          padding: '8px 16px',
+                          backgroundColor: isArticleInEditMode(article.id) ? '#10b981' : '#3b82f6',
+                          color: 'white',
+                          border: 'none',
+                          borderRadius: '6px',
+                          fontSize: '14px',
+                          fontWeight: '500',
+                          cursor: 'pointer',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          gap: '6px'
+                        }}
+                      >
+                        <span>{isArticleInEditMode(article.id) ? '💾' : '✏️'}</span>
+                        {isArticleInEditMode(article.id) ? 'Save' : 'Edit'}
+                      </button>
                       <div className="verification-section">
                         <div className="relative inline-block text-left">
                           {/* Button Group */}
@@ -434,62 +484,6 @@ function App() {
                           )}
                         </div>
                       </div>
-                      <button 
-                        className="link-btn"
-                        style={{
-                          minWidth: '120px',
-                          padding: '8px 16px',
-                          backgroundColor: '#6b7280',
-                          color: 'white',
-                          border: 'none',
-                          borderRadius: '6px',
-                          fontSize: '14px',
-                          fontWeight: '500',
-                          cursor: 'pointer',
-                          display: 'flex',
-                          alignItems: 'center',
-                          gap: '6px',
-                          transition: 'background-color 0.2s',
-                          textDecoration: 'none'
-                        }}
-                        onMouseEnter={(e) => {
-                          e.currentTarget.style.backgroundColor = '#4b5563'
-                        }}
-                        onMouseLeave={(e) => {
-                          e.currentTarget.style.backgroundColor = '#6b7280'
-                        }}
-                      >
-                        🔗 View Original
-                      </button>
-                      <button 
-                        className="edit-save-btn"
-                        onClick={() => toggleEditMode(article.id)}
-                        title={isArticleInEditMode(article.id) ? 'Save changes' : 'Edit article'}
-                        style={{
-                          minWidth: '80px',
-                          padding: '8px 16px',
-                          backgroundColor: isArticleInEditMode(article.id) ? '#10b981' : '#3b82f6',
-                          color: 'white',
-                          border: 'none',
-                          borderRadius: '6px',
-                          fontSize: '14px',
-                          fontWeight: '500',
-                          cursor: 'pointer',
-                          display: 'flex',
-                          alignItems: 'center',
-                          gap: '6px',
-                          transition: 'background-color 0.2s'
-                        }}
-                        onMouseEnter={(e) => {
-                          e.currentTarget.style.backgroundColor = isArticleInEditMode(article.id) ? '#059669' : '#2563eb'
-                        }}
-                        onMouseLeave={(e) => {
-                          e.currentTarget.style.backgroundColor = isArticleInEditMode(article.id) ? '#10b981' : '#3b82f6'
-                        }}
-                      >
-                        <span>{isArticleInEditMode(article.id) ? '💾' : '✏️'}</span>
-                        {isArticleInEditMode(article.id) ? 'Save' : 'Edit'}
-                      </button>
                     </div>
                   </div>
                 </div>
