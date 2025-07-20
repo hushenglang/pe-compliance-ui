@@ -6,7 +6,7 @@ function App() {
   const {
     // State
     activeTab,
-    timePeriod,
+    dateRange,
     sourceFilter,
     selectedArticles,
     articleStatus,
@@ -17,7 +17,7 @@ function App() {
     
     // Setters
     setActiveTab,
-    setTimePeriod,
+    setDateRange,
     setSourceFilter,
     
     // Actions
@@ -46,7 +46,7 @@ function App() {
           <NewsSummary />
         ) : (
           <NewsEditor
-            timePeriod={timePeriod}
+            dateRange={dateRange}
             sourceFilter={sourceFilter}
             selectedArticles={selectedArticles}
             articles={articleData}
@@ -54,7 +54,7 @@ function App() {
             openDropdowns={openDropdowns}
             editingArticles={editingArticles}
             editValues={editValues}
-            onTimePeriodChange={setTimePeriod}
+            onDateRangeChange={setDateRange}
             onSourceFilterChange={setSourceFilter}
             onArticleSelection={handleArticleSelection}
             onStatusToggle={toggleDropdown}

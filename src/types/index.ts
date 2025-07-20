@@ -4,7 +4,10 @@ export type ArticleStatus = 'pending' | 'verified' | 'discarded'
 
 export type TabType = 'news-summary' | 'news-editor'
 
-export type TimePeriod = 'last-7-days' | 'last-30-days' | 'last-90-days'
+export interface DateRange {
+  startDate: string // ISO date string (YYYY-MM-DD)
+  endDate: string   // ISO date string (YYYY-MM-DD)
+}
 
 export type SourceFilter = 'all-sources' | 'sfc' | 'hkma' | 'sec' | 'hkex'
 
@@ -39,7 +42,7 @@ export interface NewsData {
 
 export interface AppState {
   activeTab: TabType
-  timePeriod: TimePeriod
+  dateRange: DateRange
   sourceFilter: SourceFilter
   selectedArticles: string[]
   articleStatus: Record<string, ArticleStatus>

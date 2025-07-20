@@ -1,10 +1,22 @@
 import { useState, useEffect } from 'react'
-import type { AppState, ArticleStatus, EditableArticleData, Article } from '../types'
+import type { AppState, ArticleStatus, EditableArticleData, Article, DateRange } from '../types'
 import { mockArticles } from '../data/mockData'
+
+// Helper function to get default date range (last 7 days)
+const getDefaultDateRange = (): DateRange => {
+  const endDate = new Date()
+  const startDate = new Date()
+  startDate.setDate(endDate.getDate() - 7)
+  
+  return {
+    startDate: startDate.toISOString().split('T')[0], // YYYY-MM-DD format
+    endDate: endDate.toISOString().split('T')[0]
+  }
+}
 
 export const useAppState = () => {
   const [activeTab, setActiveTab] = useState<AppState['activeTab']>('news-summary')
-  const [timePeriod, setTimePeriod] = useState<AppState['timePeriod']>('last-7-days')
+  const [dateRange, setDateRange] = useState<AppState['dateRange']>(getDefaultDateRange())
   const [sourceFilter, setSourceFilter] = useState<AppState['sourceFilter']>('all-sources')
   const [selectedArticles, setSelectedArticles] = useState<string[]>([])
   const [articleStatus, setArticleStatus] = useState<Record<string, ArticleStatus>>({})
@@ -115,7 +127,7 @@ export const useAppState = () => {
   return {
     // State
     activeTab,
-    timePeriod,
+    dateRange,
     sourceFilter,
     selectedArticles,
     articleStatus,
@@ -126,7 +138,7 @@ export const useAppState = () => {
     
     // Setters
     setActiveTab,
-    setTimePeriod,
+    setDateRange,
     setSourceFilter,
     
     // Computed/Actions

@@ -1,9 +1,9 @@
 import { FilterControls } from './FilterControls'
 import { ArticleItem } from './ArticleItem'
-import type { Article, TimePeriod, SourceFilter, ArticleStatus, EditableArticleData } from '../types'
+import type { Article, DateRange, SourceFilter, ArticleStatus, EditableArticleData } from '../types'
 
 interface NewsEditorProps {
-  timePeriod: TimePeriod
+  dateRange: DateRange
   sourceFilter: SourceFilter
   selectedArticles: string[]
   articles: Article[]
@@ -11,7 +11,7 @@ interface NewsEditorProps {
   openDropdowns: string[]
   editingArticles: string[]
   editValues: Record<string, EditableArticleData>
-  onTimePeriodChange: (period: TimePeriod) => void
+  onDateRangeChange: (dateRange: DateRange) => void
   onSourceFilterChange: (filter: SourceFilter) => void
   onArticleSelection: (articleId: string) => void
   onStatusToggle: (articleId: string) => void
@@ -22,7 +22,7 @@ interface NewsEditorProps {
 }
 
 export const NewsEditor = ({
-  timePeriod,
+  dateRange,
   sourceFilter,
   selectedArticles,
   articles,
@@ -30,7 +30,7 @@ export const NewsEditor = ({
   openDropdowns,
   editingArticles,
   editValues,
-  onTimePeriodChange,
+  onDateRangeChange,
   onSourceFilterChange,
   onArticleSelection,
   onStatusToggle,
@@ -59,10 +59,10 @@ export const NewsEditor = ({
         
         {/* Filter Controls */}
         <FilterControls
-          timePeriod={timePeriod}
+          dateRange={dateRange}
           sourceFilter={sourceFilter}
           selectedCount={selectedArticles.length}
-          onTimePeriodChange={onTimePeriodChange}
+          onDateRangeChange={onDateRangeChange}
           onSourceFilterChange={onSourceFilterChange}
           onGenerateReport={onGenerateReport}
         />
