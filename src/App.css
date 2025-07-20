@@ -216,7 +216,6 @@ body {
   background-color: #f8fafc;
   padding: 1.5rem 0;
   margin: 0;
-  border-bottom: 1px solid #e2e8f0;
 }
 
 .editor-header h1 {
@@ -395,7 +394,7 @@ body {
   background-color: transparent;
   padding: 0.5rem 0;
   margin-bottom: 0.75rem;
-  border-bottom: 1px solid #f1f5f9;
+  border-bottom: 1px solid #d1d5db;
 }
 
 .source-group-title {
@@ -405,14 +404,14 @@ body {
 }
 
 .source-icon {
-  font-size: 1rem;
-  opacity: 0.7;
+  font-size: 1.125rem;
+  opacity: 0.8;
 }
 
 .source-name {
-  font-size: 0.875rem;
+  font-size: 1rem;
   font-weight: 600;
-  color: #64748b;
+  color: #475569;
   text-transform: uppercase;
   letter-spacing: 0.05em;
 }
@@ -478,32 +477,14 @@ body {
   box-shadow: 0 4px 12px 0 rgba(0, 0, 0, 0.15);
 }
 
-.article-header {
+.title-label-with-checkbox {
   display: flex;
   align-items: center;
-  gap: 1rem;
-  margin-bottom: 1.5rem;
-  padding-bottom: 1rem;
-  border-bottom: 1px solid #e2e8f0;
-}
-
-.article-header input[type="checkbox"] {
-  width: 1.25rem;
-  height: 1.25rem;
-  cursor: pointer;
-}
-
-.article-date {
-  font-size: 1rem;
-  font-weight: 600;
-  color: #1e293b;
-  
 }
 
 .article-date {
   font-size: 0.875rem;
   color: #6b7280;
-  margin-left: auto;
 }
 
 .article-content {

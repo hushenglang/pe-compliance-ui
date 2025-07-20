@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
-import type { AppState, ArticleStatus, EditableArticleData, Article, DateRange } from '../types'
-import { mockArticles } from '../data/mockData'
+import type { AppState, ArticleStatus, EditableArticleData, Article, DateRange, StatusFilter } from '../types'
+import { useNewsData } from './useNewsData'
 
 // Helper function to get default date range (last 7 days)
 const getDefaultDateRange = (): DateRange => {
@@ -14,21 +14,43 @@ const getDefaultDateRange = (): DateRange => {
   }
 }
 
+// Helper function to convert ApiArticle to Article format
+const mapApiArticleToArticle = (apiArticle: any): Article => ({
+  id: apiArticle.id,
+  source: apiArticle.source,
+  icon: apiArticle.icon,
+  date: apiArticle.date,
+  time: apiArticle.time,
+  title: apiArticle.title,
+  aiSummary: apiArticle.aiSummary,
+  content: apiArticle.content || '',
+  contentUrl: apiArticle.contentUrl
+})
+
 export const useAppState = () => {
   const [activeTab, setActiveTab] = useState<AppState['activeTab']>('news-summary')
   const [dateRange, setDateRange] = useState<AppState['dateRange']>(getDefaultDateRange())
   const [sourceFilter, setSourceFilter] = useState<AppState['sourceFilter']>('all-sources')
+  const [statusFilter, setStatusFilter] = useState<AppState['statusFilter']>('all-statuses')
   const [selectedArticles, setSelectedArticles] = useState<string[]>([])
   const [articleStatus, setArticleStatus] = useState<Record<string, ArticleStatus>>({})
   const [openDropdowns, setOpenDropdowns] = useState<string[]>([])
   const [editingArticles, setEditingArticles] = useState<string[]>([])
   const [editValues, setEditValues] = useState<Record<string, EditableArticleData>>({})
-  const [articleData, setArticleData] = useState<Article[]>([])
-
-  // Initialize article data
-  useEffect(() => {
-    setArticleData(mockArticles)
-  }, [])
+  
+  // Use the news data hook for API integration
+  const { articles: apiArticles, loading, filterLoading, error, refetch } = useNewsData(dateRange, sourceFilter)
+  
+  // Convert API articles to the format expected by existing components and filter by status
+  const allArticleData = apiArticles.map(mapApiArticleToArticle)
+  
+  // Filter articles by status
+  const articleData = statusFilter === 'all-statuses' 
+    ? allArticleData 
+    : allArticleData.filter(article => {
+        const status = articleStatus[article.id] || 'pending'
+        return status === statusFilter
+      })
 
   const handleArticleSelection = (articleId: string) => {
     setSelectedArticles(prev => 
@@ -66,14 +88,12 @@ export const useAppState = () => {
     const isEditing = isArticleInEditMode(articleId)
     
     if (isEditing) {
-      // Save changes
+      // Save changes - in a real app, this would typically sync back to the API
       const editData = editValues[articleId]
       if (editData) {
-        setArticleData(prev => prev.map(article => 
-          article.id === articleId 
-            ? { ...article, title: editData.title, aiSummary: editData.aiSummary }
-            : article
-        ))
+        // For now, we just update local state
+        // In a production app, you'd want to call an API to save changes
+        console.log('Saving changes for article:', articleId, editData)
       }
       // Remove from editing
       setEditingArticles(prev => prev.filter(id => id !== articleId))
@@ -129,6 +149,7 @@ export const useAppState = () => {
     activeTab,
     dateRange,
     sourceFilter,
+    statusFilter,
     selectedArticles,
     articleStatus,
     openDropdowns,
@@ -136,10 +157,17 @@ export const useAppState = () => {
     editValues,
     articleData,
     
+    // API state
+    loading,
+    filterLoading,
+    error,
+    refetch,
+    
     // Setters
     setActiveTab,
     setDateRange,
     setSourceFilter,
+    setStatusFilter,
     
     // Computed/Actions
     handleArticleSelection,

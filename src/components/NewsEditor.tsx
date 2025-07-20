@@ -1,18 +1,22 @@
 import { FilterControls } from './FilterControls'
 import { ArticleItem } from './ArticleItem'
-import type { Article, DateRange, SourceFilter, ArticleStatus, EditableArticleData, NewsSource } from '../types'
+import { LoadingSpinner } from './LoadingSpinner'
+import type { Article, DateRange, SourceFilter, StatusFilter, ArticleStatus, EditableArticleData, NewsSource } from '../types'
 
 interface NewsEditorProps {
   dateRange: DateRange
   sourceFilter: SourceFilter
+  statusFilter: StatusFilter
   selectedArticles: string[]
   articles: Article[]
   articleStatus: Record<string, ArticleStatus>
   openDropdowns: string[]
   editingArticles: string[]
   editValues: Record<string, EditableArticleData>
+  filterLoading: boolean
   onDateRangeChange: (dateRange: DateRange) => void
   onSourceFilterChange: (filter: SourceFilter) => void
+  onStatusFilterChange: (filter: StatusFilter) => void
   onArticleSelection: (articleId: string) => void
   onStatusToggle: (articleId: string) => void
   onStatusChange: (articleId: string, status: ArticleStatus) => void
@@ -32,14 +36,17 @@ const sourceConfig = {
 export const NewsEditor = ({
   dateRange,
   sourceFilter,
+  statusFilter,
   selectedArticles,
   articles,
   articleStatus,
   openDropdowns,
   editingArticles,
   editValues,
+  filterLoading,
   onDateRangeChange,
   onSourceFilterChange,
+  onStatusFilterChange,
   onArticleSelection,
   onStatusToggle,
   onStatusChange,
@@ -82,57 +89,68 @@ export const NewsEditor = ({
         <FilterControls
           dateRange={dateRange}
           sourceFilter={sourceFilter}
+          statusFilter={statusFilter}
           selectedCount={selectedArticles.length}
+          totalCount={articles.length}
           onDateRangeChange={onDateRangeChange}
           onSourceFilterChange={onSourceFilterChange}
+          onStatusFilterChange={onStatusFilterChange}
           onGenerateReport={onGenerateReport}
         />
       </div>
 
       {/* Grouped Articles List */}
       <div className="articles-list">
-        {sortedSources.map(source => (
-          <div key={source} className="source-group">
-            {/* Source Group Header */}
-            <div className="source-group-header">
-              <div className="source-group-title">
-                <span className="source-icon">{sourceConfig[source].icon}</span>
-                <span className="source-name">{sourceConfig[source].name}</span>
-                <span className="source-count">({groupedArticles[source].length} articles)</span>
+        {filterLoading ? (
+          <div style={{ display: 'flex', justifyContent: 'center', padding: '40px' }}>
+            <LoadingSpinner message="Filtering articles..." />
+          </div>
+        ) : (
+          <>
+            {sortedSources.map(source => (
+              <div key={source} className="source-group">
+                {/* Source Group Header */}
+                <div className="source-group-header">
+                  <div className="source-group-title">
+                    <span className="source-icon">{sourceConfig[source].icon}</span>
+                    <span className="source-name">{sourceConfig[source].name}</span>
+                    <span className="source-count">({groupedArticles[source].length} articles)</span>
+                  </div>
+                </div>
+                
+                {/* Articles in this source group */}
+                <div className="source-group-articles">
+                  {groupedArticles[source].map(article => (
+                    <ArticleItem
+                      key={article.id}
+                      article={article}
+                      isSelected={selectedArticles.includes(article.id)}
+                      status={getArticleStatus(article.id)}
+                      isDropdownOpen={isDropdownOpen(article.id)}
+                      isInEditMode={isArticleInEditMode(article.id)}
+                      editValues={editValues[article.id]}
+                      onSelection={onArticleSelection}
+                      onStatusToggle={onStatusToggle}
+                      onStatusChange={onStatusChange}
+                      onEditToggle={onEditToggle}
+                      onEditValueChange={onEditValueChange}
+                    />
+                  ))}
+                </div>
               </div>
-            </div>
+            ))}
             
-            {/* Articles in this source group */}
-            <div className="source-group-articles">
-              {groupedArticles[source].map(article => (
-                <ArticleItem
-                  key={article.id}
-                  article={article}
-                  isSelected={selectedArticles.includes(article.id)}
-                  status={getArticleStatus(article.id)}
-                  isDropdownOpen={isDropdownOpen(article.id)}
-                  isInEditMode={isArticleInEditMode(article.id)}
-                  editValues={editValues[article.id]}
-                  onSelection={onArticleSelection}
-                  onStatusToggle={onStatusToggle}
-                  onStatusChange={onStatusChange}
-                  onEditToggle={onEditToggle}
-                  onEditValueChange={onEditValueChange}
-                />
-              ))}
-            </div>
-          </div>
-        ))}
-        
-        {/* Show message if no articles */}
-        {articles.length === 0 && (
-          <div className="no-articles-message">
-            <div className="no-articles-content">
-              <span className="no-articles-icon">📰</span>
-              <p>No articles found for the selected filters.</p>
-              <p className="no-articles-subtitle">Try adjusting your date range or source filter.</p>
-            </div>
-          </div>
+            {/* Show message if no articles */}
+            {articles.length === 0 && (
+              <div className="no-articles-message">
+                <div className="no-articles-content">
+                  <span className="no-articles-icon">📰</span>
+                  <p>No articles found for the selected filters.</p>
+                  <p className="no-articles-subtitle">Try adjusting your date range or source filter.</p>
+                </div>
+              </div>
+            )}
+          </>
         )}
       </div>
     </>

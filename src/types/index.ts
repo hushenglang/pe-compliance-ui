@@ -11,6 +11,8 @@ export interface DateRange {
 
 export type SourceFilter = 'all-sources' | 'sfc' | 'hkma' | 'sec' | 'hkex'
 
+export type StatusFilter = 'all-statuses' | 'pending' | 'verified' | 'discarded'
+
 export interface NewsSourceData {
   toProcess: number
   processed: number
@@ -26,6 +28,7 @@ export interface Article {
   title: string
   aiSummary: string
   content: string
+  contentUrl?: string
 }
 
 export interface EditableArticleData {
@@ -40,10 +43,44 @@ export interface NewsData {
   hkex: NewsSourceData
 }
 
+// API Response Types
+export interface ComplianceNewsLightResponse {
+  id: number
+  source: string
+  issue_date?: string
+  title: string
+  content_url?: string
+  llm_summary?: string
+  creation_date: string
+  creation_user: string
+  status: string
+}
+
+export interface GroupedComplianceNewsResponse {
+  grouped_news: Record<string, ComplianceNewsLightResponse[]>
+}
+
+// Mapped types for UI components
+export interface ApiArticle {
+  id: string
+  source: NewsSource
+  icon: string
+  date: string
+  time: string
+  title: string
+  aiSummary: string
+  content?: string
+  contentUrl?: string
+  creationDate: string
+  creationUser: string
+  status: string
+}
+
 export interface AppState {
   activeTab: TabType
   dateRange: DateRange
   sourceFilter: SourceFilter
+  statusFilter: StatusFilter
   selectedArticles: string[]
   articleStatus: Record<string, ArticleStatus>
   openDropdowns: string[]

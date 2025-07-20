@@ -1,4 +1,5 @@
 import { API_CONFIG } from '../utils/constants'
+import type { GroupedComplianceNewsResponse } from '../types'
 
 export interface ComplianceNewsStatistics {
   source: string
@@ -73,6 +74,40 @@ class ApiService {
       // Handle network errors
       throw new ApiError(
         `Failed to fetch statistics: ${error instanceof Error ? error.message : 'Unknown error'}`
+      )
+    }
+  }
+
+  async getGroupedNewsByDateRange(
+    startDate: string,
+    endDate: string,
+    sources?: string
+  ): Promise<GroupedComplianceNewsResponse> {
+    const url = new URL(`${this.baseUrl}${API_CONFIG.ENDPOINTS.GROUPED_NEWS}`)
+    url.searchParams.append('start_date', startDate)
+    url.searchParams.append('end_date', endDate)
+    
+    if (sources) {
+      url.searchParams.append('sources', sources)
+    }
+    
+    try {
+      const response = await fetch(url.toString(), {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      })
+
+      return this.handleResponse<GroupedComplianceNewsResponse>(response)
+    } catch (error) {
+      if (error instanceof ApiError) {
+        throw error
+      }
+      
+      // Handle network errors
+      throw new ApiError(
+        `Failed to fetch grouped news: ${error instanceof Error ? error.message : 'Unknown error'}`
       )
     }
   }
