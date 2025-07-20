@@ -42,12 +42,9 @@ export const ArticleItem = ({
           onChange={() => onSelection(article.id)}
           aria-label={`Select article: ${article.title}`}
         />
-        <span className="article-source">
-          {article.icon} {article.source}
-        </span>
-        <span className="article-date">
+         <span className="article-date">
           {article.date} | {article.time}
-        </span>
+          </span>
       </div>
       
       <div className="article-content">
