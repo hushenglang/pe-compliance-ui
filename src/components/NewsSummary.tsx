@@ -1,5 +1,6 @@
 import { NewsSourceCard } from './NewsSourceCard'
 import { LoadingSpinner } from './LoadingSpinner'
+import { StatisticsSummary } from './StatisticsSummary'
 import { useStatistics } from '../hooks/useStatistics'
 import { newsData } from '../data/mockData'
 
@@ -36,6 +37,9 @@ export const NewsSummary = () => {
           </div>
         )}
       </div>
+
+      {/* Overall Statistics Summary */}
+      <StatisticsSummary data={statisticsData} />
 
       {/* News Sources Section */}
       <div className="news-sources-section">
