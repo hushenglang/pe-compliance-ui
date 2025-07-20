@@ -5,6 +5,7 @@ import type {
   ApiArticle,
   NewsSource,
   SourceFilter,
+  StatusFilter,
   DateRange
 } from '../types'
 
@@ -66,6 +67,22 @@ const getApiSourcesParam = (sourceFilter: SourceFilter): string | undefined => {
   return sourceMap[sourceFilter]
 }
 
+// Helper function to convert StatusFilter to API status parameter
+const getApiStatusParam = (statusFilter: StatusFilter): string | undefined => {
+  if (statusFilter === 'all-statuses') {
+    return undefined
+  }
+  
+  const statusMap: Record<StatusFilter, string> = {
+    'all-statuses': '',
+    'pending': 'PENDING',
+    'verified': 'VERIFIED', 
+    'discarded': 'DISCARD'
+  }
+  
+  return statusMap[statusFilter]
+}
+
 export interface UseNewsDataResult {
   articles: ApiArticle[]
   loading: boolean
@@ -74,7 +91,7 @@ export interface UseNewsDataResult {
   refetch: () => Promise<void>
 }
 
-export const useNewsData = (dateRange: DateRange, sourceFilter: SourceFilter): UseNewsDataResult => {
+export const useNewsData = (dateRange: DateRange, sourceFilter: SourceFilter, statusFilter: StatusFilter): UseNewsDataResult => {
   const [articles, setArticles] = useState<ApiArticle[]>([])
   const [loading, setLoading] = useState(true) // Initial loading
   const [filterLoading, setFilterLoading] = useState(false) // Filter-triggered loading
@@ -91,10 +108,12 @@ export const useNewsData = (dateRange: DateRange, sourceFilter: SourceFilter): U
     
     try {
       const sourcesParam = getApiSourcesParam(sourceFilter)
+      const statusParam = getApiStatusParam(statusFilter)
       const response = await apiService.getGroupedNewsByDateRange(
         dateRange.startDate,
         dateRange.endDate,
-        sourcesParam
+        sourcesParam,
+        statusParam
       )
       
       const mappedArticles = mapApiResponseToArticles(response.grouped_news)
@@ -111,7 +130,7 @@ export const useNewsData = (dateRange: DateRange, sourceFilter: SourceFilter): U
         setFilterLoading(false)
       }
     }
-  }, [dateRange.startDate, dateRange.endDate, sourceFilter, isInitialLoad])
+  }, [dateRange.startDate, dateRange.endDate, sourceFilter, statusFilter, isInitialLoad])
 
   // Fetch data when dependencies change
   useEffect(() => {

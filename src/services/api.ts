@@ -81,7 +81,8 @@ class ApiService {
   async getGroupedNewsByDateRange(
     startDate: string,
     endDate: string,
-    sources?: string
+    sources?: string,
+    status?: string
   ): Promise<GroupedComplianceNewsResponse> {
     const url = new URL(`${this.baseUrl}${API_CONFIG.ENDPOINTS.GROUPED_NEWS}`)
     url.searchParams.append('start_date', startDate)
@@ -89,6 +90,10 @@ class ApiService {
     
     if (sources) {
       url.searchParams.append('sources', sources)
+    }
+    
+    if (status) {
+      url.searchParams.append('status', status)
     }
     
     try {

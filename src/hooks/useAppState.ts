@@ -39,18 +39,11 @@ export const useAppState = () => {
   const [editValues, setEditValues] = useState<Record<string, EditableArticleData>>({})
   
   // Use the news data hook for API integration
-  const { articles: apiArticles, loading, filterLoading, error, refetch } = useNewsData(dateRange, sourceFilter)
+  const { articles: apiArticles, loading, filterLoading, error, refetch } = useNewsData(dateRange, sourceFilter, statusFilter)
   
-  // Convert API articles to the format expected by existing components and filter by status
-  const allArticleData = apiArticles.map(mapApiArticleToArticle)
-  
-  // Filter articles by status
-  const articleData = statusFilter === 'all-statuses' 
-    ? allArticleData 
-    : allArticleData.filter(article => {
-        const status = articleStatus[article.id] || 'pending'
-        return status === statusFilter
-      })
+  // Convert API articles to the format expected by existing components
+  // Note: Status filtering is now handled by the API, so we don't need client-side filtering
+  const articleData = apiArticles.map(mapApiArticleToArticle)
 
   const handleArticleSelection = (articleId: string) => {
     setSelectedArticles(prev => 
