@@ -130,6 +130,36 @@ npm run format       # Format code with Prettier
 
 The UI connects to the Python backend at `http://localhost:8000` and consumes these endpoints:
 
+### Statistics Endpoint
+- **GET** `/api/news/statistics` - Fetches news statistics by source and status
+- **Response Format**:
+```json
+[
+  {
+    "source": "SFC",
+    "status": "PENDING", 
+    "record_count": 15
+  },
+  {
+    "source": "SFC",
+    "status": "VERIFIED",
+    "record_count": 8
+  }
+]
+```
+
+### Status Mapping
+The frontend maps backend statuses to display categories:
+- **To Process**: `PENDING` status
+- **Processed**: `VERIFIED` and `DISCARD` statuses
+
+### Implementation Details
+- **API Service**: `src/services/api.ts` - Handles HTTP requests and error handling
+- **Statistics Hook**: `src/hooks/useStatistics.ts` - Manages statistics data fetching and state
+- **Real-time Updates**: News summary automatically fetches latest statistics on load
+- **Error Handling**: Graceful fallback to mock data with retry functionality
+- **Loading States**: Displays loading spinner during API calls
+
 - `GET /health` - Health check
 - `GET /news/hkex` - HKEX news data
 - `GET /news/hkma` - HKMA news data  
