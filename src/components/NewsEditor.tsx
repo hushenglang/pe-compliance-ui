@@ -1,6 +1,7 @@
 import { FilterControls } from './FilterControls'
 import { ArticleItem } from './ArticleItem'
 import { LoadingSpinner } from './LoadingSpinner'
+import { SOURCE_CONFIG } from '../utils/constants'
 import type { Article, DateRange, SourceFilter, StatusFilter, ArticleStatus, EditableArticleData, NewsSource } from '../types'
 
 interface NewsEditorProps {
@@ -25,14 +26,6 @@ interface NewsEditorProps {
   onEditToggle: (articleId: string) => void
   onEditValueChange: (articleId: string, field: 'title' | 'aiSummary', value: string) => void
   onGenerateReport: () => void
-}
-
-// Source configuration with icons
-const sourceConfig = {
-  SFC: { icon: '🏢', name: 'SFC' },
-  HKMA: { icon: '🏦', name: 'HKMA' },
-  SEC: { icon: '🇺🇸', name: 'SEC' },
-  HKEX: { icon: '📈', name: 'HKEX' }
 }
 
 export const NewsEditor = ({
@@ -96,6 +89,7 @@ export const NewsEditor = ({
           statusFilter={statusFilter}
           selectedCount={selectedArticles.length}
           totalCount={articles.length}
+          filterLoading={filterLoading}
           onDateRangeChange={onDateRangeChange}
           onSourceFilterChange={onSourceFilterChange}
           onStatusFilterChange={onStatusFilterChange}
@@ -116,8 +110,8 @@ export const NewsEditor = ({
                 {/* Source Group Header */}
                 <div className="source-group-header">
                   <div className="source-group-title">
-                    <span className="source-icon">{sourceConfig[source].icon}</span>
-                    <span className="source-name">{sourceConfig[source].name}</span>
+                    <span className="source-icon">{SOURCE_CONFIG[source].icon}</span>
+                    <span className="source-name">{SOURCE_CONFIG[source].name}</span>
                     <span className="source-count">({groupedArticles[source].length} articles)</span>
                   </div>
                 </div>

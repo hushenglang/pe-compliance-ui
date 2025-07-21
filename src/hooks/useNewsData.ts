@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from 'react'
 import { apiService } from '../services/api'
+import { SOURCE_CONFIG } from '../utils/constants'
 import type { 
   ComplianceNewsLightResponse,
   ApiArticle,
@@ -13,14 +14,6 @@ import type {
 const mapApiResponseToArticles = (groupedNews: Record<string, ComplianceNewsLightResponse[]>): ApiArticle[] => {
   const articles: ApiArticle[] = []
   
-  // Source icons mapping
-  const sourceIcons: Record<string, string> = {
-    'SFC': '🏢',
-    'HKMA': '🏦',
-    'SEC': '🇺🇸',
-    'HKEX': '📈'
-  }
-  
   Object.entries(groupedNews).forEach(([source, newsList]) => {
     newsList.forEach(news => {
       const issueDate = news.issue_date ? new Date(news.issue_date) : new Date(news.creation_date)
@@ -28,7 +21,7 @@ const mapApiResponseToArticles = (groupedNews: Record<string, ComplianceNewsLigh
       articles.push({
         id: news.id.toString(),
         source: source as NewsSource,
-        icon: sourceIcons[source] || '📰',
+        icon: SOURCE_CONFIG[source as NewsSource]?.icon || '📰',
         date: issueDate.toISOString().split('T')[0], // YYYY-MM-DD format
         time: issueDate.toLocaleTimeString('en-US', { 
           hour: '2-digit', 

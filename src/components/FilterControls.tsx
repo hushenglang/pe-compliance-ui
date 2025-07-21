@@ -6,6 +6,7 @@ interface FilterControlsProps {
   statusFilter: StatusFilter
   selectedCount: number
   totalCount: number
+  filterLoading?: boolean
   onDateRangeChange: (dateRange: DateRange) => void
   onSourceFilterChange: (filter: SourceFilter) => void
   onStatusFilterChange: (filter: StatusFilter) => void
@@ -18,6 +19,7 @@ export const FilterControls = ({
   statusFilter,
   selectedCount,
   totalCount,
+  filterLoading = false,
   onDateRangeChange,
   onSourceFilterChange,
   onStatusFilterChange,
@@ -97,7 +99,7 @@ export const FilterControls = ({
           <span className="selected-count">Selected: {selectedCount} of {totalCount} items</span>
           <button 
             className="email-report-btn" 
-            disabled={selectedCount === 0}
+            disabled={selectedCount === 0 || filterLoading}
             onClick={onGenerateReport}
           >
             📧 Generate Email Report

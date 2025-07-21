@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { apiService, ApiError } from '../services/api'
 import type { ComplianceNewsStatistics } from '../services/api'
 import type { NewsData } from '../types'
@@ -41,7 +41,7 @@ export const useStatistics = (): UseStatisticsReturn => {
     return newsData
   }
 
-  const fetchStatistics = async () => {
+  const fetchStatistics = useCallback(async () => {
     try {
       setLoading(true)
       setError(null)
@@ -60,15 +60,15 @@ export const useStatistics = (): UseStatisticsReturn => {
     } finally {
       setLoading(false)
     }
-  }
+  }, [])
 
-  const refetch = async () => {
+  const refetch = useCallback(async () => {
     await fetchStatistics()
-  }
+  }, [fetchStatistics])
 
   useEffect(() => {
     fetchStatistics()
-  }, [])
+  }, [fetchStatistics])
 
   return {
     data,

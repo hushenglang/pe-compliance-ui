@@ -56,6 +56,22 @@ export interface StatusNotification {
   timestamp: number
 }
 
+// Error handling types
+export interface AppError {
+  code: string
+  message: string
+  details?: string
+  timestamp: Date
+}
+
+export type ErrorType = 'network' | 'api' | 'validation' | 'permission' | 'unknown'
+
+export interface ApiErrorResponse {
+  detail?: string
+  message?: string
+  errors?: Record<string, string[]>
+}
+
 // API Response Types
 export interface ComplianceNewsLightResponse {
   id: number
@@ -102,4 +118,22 @@ export interface AppState {
   articleData: Article[]
   statusUpdateState: StatusUpdateState
   notifications: StatusNotification[]
+}
+
+// Loading states for better UX
+export interface LoadingState {
+  isLoading: boolean
+  message?: string
+  progress?: number
+}
+
+// Form validation types
+export interface ValidationError {
+  field: string
+  message: string
+}
+
+export interface ValidationResult {
+  isValid: boolean
+  errors: ValidationError[]
 } 

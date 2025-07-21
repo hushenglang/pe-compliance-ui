@@ -381,6 +381,20 @@ body {
   margin-bottom: 2rem;
 }
 
+/* Label with checkbox styling */
+.label-with-checkbox {
+  display: flex;
+  align-items: center;
+  margin-bottom: 0.5rem;
+}
+
+.label-with-checkbox label {
+  font-weight: 600;
+  color: #374151;
+  font-size: 0.875rem;
+  margin: 0;
+}
+
 /* Source Group Styles */
 .source-group {
   display: flex;
@@ -477,10 +491,7 @@ body {
   box-shadow: 0 4px 12px 0 rgba(0, 0, 0, 0.15);
 }
 
-.title-label-with-checkbox {
-  display: flex;
-  align-items: center;
-}
+
 
 .article-date {
   font-size: 0.875rem;

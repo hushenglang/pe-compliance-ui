@@ -1,4 +1,5 @@
-import { ArticleStatusDropdown } from './ArticleStatusDropdown'
+import { EditableField } from './EditableField'
+import { ArticleActions } from './ArticleActions'
 import type { Article, ArticleStatus, EditableArticleData } from '../types'
 
 interface ArticleItemProps {
@@ -44,132 +45,45 @@ export const ArticleItem = ({
   return (
     <div className="article-item">
       <div className="article-content">
-        <div className="article-field">
-          <div className="title-row">
-            <div className="title-label-with-checkbox">
-              <input 
-                type="checkbox" 
-                checked={isSelected}
-                onChange={() => onSelection(article.id)}
-                aria-label={`Select article: ${article.title}`}
-                style={{
-                  width: '1.25rem',
-                  height: '1.25rem',
-                  cursor: 'pointer',
-                  marginRight: '0.5rem'
-                }}
-              />
-              <label htmlFor={`title-${article.id}`}>Title:</label>
-            </div>
-          </div>
-          <div className="editable-field">
-            <input 
-              id={`title-${article.id}`}
-              type="text" 
-              value={isInEditMode ? (editValues?.title || '') : article.title}
-              onChange={(e) => onEditValueChange(article.id, 'title', e.target.value)}
-              readOnly={!isInEditMode}
-              className={isInEditMode ? 'editable' : 'readonly'}
-              aria-label="Article title"
-            />
-          </div>
-        </div>
+        <EditableField
+          id={`title-${article.id}`}
+          label="Title"
+          value={article.title}
+          editValue={editValues?.title}
+          isInEditMode={isInEditMode}
+          showCheckbox={true}
+          isChecked={isSelected}
+          onCheckboxChange={() => onSelection(article.id)}
+          checkboxAriaLabel={`Select article: ${article.title}`}
+          onChange={(value) => onEditValueChange(article.id, 'title', value)}
+        />
         
-        <div className="article-field">
-          <label htmlFor={`summary-${article.id}`}>AI Summary:</label>
-          <div className="editable-field">
-            <textarea 
-              id={`summary-${article.id}`}
-              value={isInEditMode ? (editValues?.aiSummary || '') : article.aiSummary}
-              onChange={(e) => onEditValueChange(article.id, 'aiSummary', e.target.value)}
-              readOnly={!isInEditMode}
-              rows={9}
-              className={isInEditMode ? 'editable' : 'readonly'}
-              aria-label="Article AI summary"
-            />
-          </div>
-        </div>
+        <EditableField
+          id={`summary-${article.id}`}
+          label="AI Summary"
+          value={article.aiSummary}
+          editValue={editValues?.aiSummary}
+          isInEditMode={isInEditMode}
+          isTextArea={true}
+          rows={9}
+          onChange={(value) => onEditValueChange(article.id, 'aiSummary', value)}
+        />
         
-        <div className="article-actions" style={{ 
-          display: 'flex', 
-          alignItems: 'center', 
-          gap: '12px',
-          marginTop: '16px',
-          justifyContent: 'space-between'
-        }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-            <button 
-              className="link-btn"
-              onClick={handleViewOriginal}
-              style={{
-                minWidth: '120px',
-                padding: '8px 16px',
-                backgroundColor: '#6b7280',
-                color: 'white',
-                border: 'none',
-                borderRadius: '6px',
-                fontSize: '14px',
-                fontWeight: '500',
-                cursor: 'pointer',
-                display: 'flex',
-                alignItems: 'center',
-                gap: '6px',
-                transition: 'background-color 0.2s',
-                textDecoration: 'none'
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.backgroundColor = '#4b5563'
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.backgroundColor = '#6b7280'
-              }}
-            >
-              🔗 View Original
-            </button>
-            
-            <button 
-              className="edit-save-btn"
-              onClick={() => onEditToggle(article.id)}
-              title={isInEditMode ? 'Save changes' : 'Edit article'}
-              style={{
-                width: '90px',
-                padding: '8px 16px',
-                backgroundColor: isInEditMode ? '#10b981' : '#6b7280',
-                color: 'white',
-                border: 'none',
-                borderRadius: '6px',
-                fontSize: '14px',
-                fontWeight: '500',
-                cursor: 'pointer',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                gap: '6px'
-              }}
-            >
-              <span>{isInEditMode ? '💾' : '✏️'}</span>
-              {isInEditMode ? 'Save' : 'Edit'}
-            </button>
-            
-            <ArticleStatusDropdown
-              articleId={article.id}
-              currentStatus={status}
-              isOpen={isDropdownOpen}
-              isLoading={isStatusLoading}
-              isStatusUpdateAllowed={isStatusUpdateAllowed}
-              onToggle={onStatusToggle}
-              onStatusChange={onStatusChange}
-            />
-          </div>
-          
-          <span className="article-date" style={{
-            fontSize: '0.875rem',
-            color: '#6b7280',
-            fontWeight: '500'
-          }}>
-            {article.date} | {article.time}
-          </span>
-        </div>
+        <ArticleActions
+          articleId={article.id}
+          date={article.date}
+          time={article.time}
+          contentUrl={article.contentUrl}
+          status={status}
+          isDropdownOpen={isDropdownOpen}
+          isInEditMode={isInEditMode}
+          isStatusLoading={isStatusLoading}
+          isStatusUpdateAllowed={isStatusUpdateAllowed}
+          onViewOriginal={handleViewOriginal}
+          onEditToggle={onEditToggle}
+          onStatusToggle={onStatusToggle}
+          onStatusChange={onStatusChange}
+        />
       </div>
     </div>
   )

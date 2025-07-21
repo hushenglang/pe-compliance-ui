@@ -79,6 +79,17 @@ export const useAppState = () => {
   // Note: Status filtering is now handled by the API, so we don't need client-side filtering
   const articleData = apiArticles.map(mapApiArticleToArticle)
 
+  // Clear selectedArticles when filters change to ensure accurate count
+  useEffect(() => {
+    setSelectedArticles([])
+  }, [dateRange.startDate, dateRange.endDate, sourceFilter, statusFilter])
+
+  // Filter selectedArticles to only include articles that exist in current results
+  useEffect(() => {
+    const currentArticleIds = new Set(apiArticles.map(article => article.id))
+    setSelectedArticles(prev => prev.filter(id => currentArticleIds.has(id)))
+  }, [apiArticles])
+
   // Sync article status from API when articles change
   useEffect(() => {
     const newArticleStatus: Record<string, ArticleStatus> = {}

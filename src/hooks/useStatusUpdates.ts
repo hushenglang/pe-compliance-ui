@@ -1,5 +1,6 @@
 import { useState, useCallback } from 'react'
 import { apiService } from '../services/api'
+import { API_STATUS_MAPPING } from '../utils/constants'
 import type { ArticleStatus, StatusUpdateState, StatusNotification } from '../types'
 
 interface UseStatusUpdatesResult {
@@ -71,14 +72,8 @@ export const useStatusUpdates = (): UseStatusUpdatesResult => {
     }))
 
     try {
-      // Map frontend status to backend status
-      // Note: Frontend uses "discarded" but backend expects "DISCARD"
-      const statusMapping = {
-        'pending': 'PENDING',
-        'verified': 'VERIFIED',
-        'discarded': 'DISCARD'
-      }
-      const backendStatus = statusMapping[newStatus]
+      // Map frontend status to backend status using centralized mapping
+      const backendStatus = API_STATUS_MAPPING[newStatus]
       
       const response = await apiService.updateNewsStatus(articleId, backendStatus)
       

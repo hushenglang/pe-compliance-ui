@@ -23,8 +23,8 @@ export const useErrorHandler = () => {
   }, [])
 
   const withErrorHandling = useCallback(
-    <T extends any[], R>(fn: (...args: T) => R) => {
-      return (...args: T): R | undefined => {
+    <TArgs extends unknown[], TReturn>(fn: (...args: TArgs) => TReturn) => {
+      return (...args: TArgs): TReturn | undefined => {
         try {
           return fn(...args)
         } catch (err) {

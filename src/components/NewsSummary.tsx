@@ -2,13 +2,21 @@ import { NewsSourceCard } from './NewsSourceCard'
 import { LoadingSpinner } from './LoadingSpinner'
 import { StatisticsSummary } from './StatisticsSummary'
 import { useStatistics } from '../hooks/useStatistics'
-import { newsData } from '../data/mockData'
+import type { NewsData } from '../types'
 
 export const NewsSummary = () => {
   const { data, loading, error, refetch } = useStatistics()
 
-  // Use real data if available, otherwise fall back to mock data
-  const statisticsData = data || newsData
+  // Fallback data structure if API data is not available
+  const fallbackData: NewsData = {
+    sfc: { toProcess: 0, processed: 0, icon: '🏢' },
+    hkma: { toProcess: 0, processed: 0, icon: '🏦' },
+    sec: { toProcess: 0, processed: 0, icon: '🇺🇸' },
+    hkex: { toProcess: 0, processed: 0, icon: '📈' }
+  }
+
+  // Use real data if available, otherwise fall back to empty data
+  const statisticsData = data || fallbackData
 
   if (loading) {
     return (
