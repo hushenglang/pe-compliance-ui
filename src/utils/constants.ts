@@ -23,7 +23,8 @@ export const API_CONFIG = {
   BASE_URL: import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000',
   ENDPOINTS: {
     STATISTICS: '/api/news/statistics',
-    GROUPED_NEWS: '/api/news/date-range/grouped'
+    GROUPED_NEWS: '/api/news/date-range/grouped',
+    UPDATE_STATUS: '/api/news/update-status'
   }
 } as const
 

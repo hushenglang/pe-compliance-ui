@@ -43,6 +43,19 @@ export interface NewsData {
   hkex: NewsSourceData
 }
 
+// Status update types
+export interface StatusUpdateState {
+  loading: Record<string, boolean>
+  lastUpdated: Record<string, number>
+}
+
+export interface StatusNotification {
+  id: string
+  message: string
+  type: 'success' | 'error'
+  timestamp: number
+}
+
 // API Response Types
 export interface ComplianceNewsLightResponse {
   id: number
@@ -87,4 +100,6 @@ export interface AppState {
   editingArticles: string[]
   editValues: Record<string, EditableArticleData>
   articleData: Article[]
+  statusUpdateState: StatusUpdateState
+  notifications: StatusNotification[]
 } 

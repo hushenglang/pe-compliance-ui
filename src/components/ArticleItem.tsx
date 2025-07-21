@@ -7,7 +7,9 @@ interface ArticleItemProps {
   status: ArticleStatus
   isDropdownOpen: boolean
   isInEditMode: boolean
+  isStatusLoading?: boolean
   editValues?: EditableArticleData
+  isStatusUpdateAllowed?: (currentStatus: ArticleStatus, newStatus: ArticleStatus) => boolean
   onSelection: (articleId: string) => void
   onStatusToggle: (articleId: string) => void
   onStatusChange: (articleId: string, status: ArticleStatus) => void
@@ -21,7 +23,9 @@ export const ArticleItem = ({
   status,
   isDropdownOpen,
   isInEditMode,
+  isStatusLoading = false,
   editValues,
+  isStatusUpdateAllowed,
   onSelection,
   onStatusToggle,
   onStatusChange,
@@ -151,6 +155,8 @@ export const ArticleItem = ({
               articleId={article.id}
               currentStatus={status}
               isOpen={isDropdownOpen}
+              isLoading={isStatusLoading}
+              isStatusUpdateAllowed={isStatusUpdateAllowed}
               onToggle={onStatusToggle}
               onStatusChange={onStatusChange}
             />

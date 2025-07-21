@@ -7,6 +7,16 @@ export interface ComplianceNewsStatistics {
   record_count: number
 }
 
+export interface UpdateStatusRequest {
+  status: string
+}
+
+export interface UpdateStatusResponse {
+  id: number
+  status: string
+  message: string
+}
+
 export class ApiError extends Error {
   status?: number
   response?: Response
@@ -113,6 +123,35 @@ class ApiService {
       // Handle network errors
       throw new ApiError(
         `Failed to fetch grouped news: ${error instanceof Error ? error.message : 'Unknown error'}`
+      )
+    }
+  }
+
+  async updateNewsStatus(newsId: string, status: string): Promise<UpdateStatusResponse> {
+    const url = `${this.baseUrl}${API_CONFIG.ENDPOINTS.UPDATE_STATUS}/${newsId}`
+    
+    const requestBody: UpdateStatusRequest = {
+      status: status.toUpperCase() // Ensure status is uppercase as expected by backend
+    }
+    
+    try {
+      const response = await fetch(url, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(requestBody)
+      })
+
+      return this.handleResponse<UpdateStatusResponse>(response)
+    } catch (error) {
+      if (error instanceof ApiError) {
+        throw error
+      }
+      
+      // Handle network errors
+      throw new ApiError(
+        `Failed to update news status: ${error instanceof Error ? error.message : 'Unknown error'}`
       )
     }
   }

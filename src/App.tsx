@@ -1,4 +1,4 @@
-import { Sidebar, NewsSummary, NewsEditor, LoadingSpinner } from './components'
+import { Sidebar, NewsSummary, NewsEditor, LoadingSpinner, NotificationContainer } from './components'
 import { useAppState } from './hooks/useAppState'
 import './App.css'
 
@@ -15,6 +15,7 @@ function App() {
     editingArticles,
     editValues,
     articleData,
+    notifications,
     
     // API state
     loading,
@@ -33,7 +34,10 @@ function App() {
     toggleDropdown,
     setArticleStatusAndCloseDropdown,
     toggleEditMode,
-    updateEditValue
+    updateEditValue,
+    isArticleStatusLoading,
+    isStatusUpdateAllowed,
+    dismissNotification
   } = useAppState()
 
   const handleGenerateReport = () => {
@@ -104,6 +108,8 @@ function App() {
                 editingArticles={editingArticles}
                 editValues={editValues}
                 filterLoading={filterLoading}
+                isArticleStatusLoading={isArticleStatusLoading}
+                isStatusUpdateAllowed={isStatusUpdateAllowed}
                 onDateRangeChange={setDateRange}
                 onSourceFilterChange={setSourceFilter}
                 onStatusFilterChange={setStatusFilter}
@@ -118,6 +124,12 @@ function App() {
           </>
         )}
       </div>
+
+      {/* Status Update Notifications */}
+      <NotificationContainer 
+        notifications={notifications}
+        onDismiss={dismissNotification}
+      />
     </div>
   )
 }

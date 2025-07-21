@@ -1,8 +1,18 @@
 import { useState, useEffect } from 'react'
-import type { AppState, ArticleStatus, EditableArticleData, Article, DateRange, StatusFilter } from '../types'
 import { useNewsData } from './useNewsData'
+import { useStatusUpdates } from './useStatusUpdates'
+import type { 
+  TabType, 
+  DateRange, 
+  SourceFilter, 
+  StatusFilter, 
+  ArticleStatus, 
+  EditableArticleData,
+  Article,
+  ApiArticle
+} from '../types'
 
-// Helper function to get default date range (last 7 days)
+// Helper function to get default date range (last 7 days to today)
 const getDefaultDateRange = (): DateRange => {
   const endDate = new Date()
   const startDate = new Date()
@@ -14,8 +24,8 @@ const getDefaultDateRange = (): DateRange => {
   }
 }
 
-// Helper function to convert ApiArticle to Article format
-const mapApiArticleToArticle = (apiArticle: any): Article => ({
+// Helper function to map API article to UI article format
+const mapApiArticleToArticle = (apiArticle: ApiArticle): Article => ({
   id: apiArticle.id,
   source: apiArticle.source,
   icon: apiArticle.icon,
@@ -27,11 +37,26 @@ const mapApiArticleToArticle = (apiArticle: any): Article => ({
   contentUrl: apiArticle.contentUrl
 })
 
+// Helper function to convert API status to ArticleStatus
+const mapApiStatusToArticleStatus = (apiStatus: string): ArticleStatus => {
+  switch (apiStatus.toUpperCase()) {
+    case 'PENDING':
+      return 'pending'
+    case 'VERIFIED':
+      return 'verified'
+    case 'DISCARD':
+      return 'discarded'
+    default:
+      return 'pending' // Default fallback
+  }
+}
+
 export const useAppState = () => {
-  const [activeTab, setActiveTab] = useState<AppState['activeTab']>('news-summary')
-  const [dateRange, setDateRange] = useState<AppState['dateRange']>(getDefaultDateRange())
-  const [sourceFilter, setSourceFilter] = useState<AppState['sourceFilter']>('all-sources')
-  const [statusFilter, setStatusFilter] = useState<AppState['statusFilter']>('all-statuses')
+  // UI State
+  const [activeTab, setActiveTab] = useState<TabType>('news-summary')
+  const [dateRange, setDateRange] = useState<DateRange>(getDefaultDateRange())
+  const [sourceFilter, setSourceFilter] = useState<SourceFilter>('all-sources')
+  const [statusFilter, setStatusFilter] = useState<StatusFilter>('all-statuses')
   const [selectedArticles, setSelectedArticles] = useState<string[]>([])
   const [articleStatus, setArticleStatus] = useState<Record<string, ArticleStatus>>({})
   const [openDropdowns, setOpenDropdowns] = useState<string[]>([])
@@ -41,9 +66,27 @@ export const useAppState = () => {
   // Use the news data hook for API integration
   const { articles: apiArticles, loading, filterLoading, error, refetch } = useNewsData(dateRange, sourceFilter, statusFilter)
   
+  // Use the status updates hook
+  const { 
+    statusUpdateState, 
+    notifications, 
+    updateArticleStatus, 
+    isStatusUpdateAllowed, 
+    dismissNotification 
+  } = useStatusUpdates()
+  
   // Convert API articles to the format expected by existing components
   // Note: Status filtering is now handled by the API, so we don't need client-side filtering
   const articleData = apiArticles.map(mapApiArticleToArticle)
+
+  // Sync article status from API when articles change
+  useEffect(() => {
+    const newArticleStatus: Record<string, ArticleStatus> = {}
+    apiArticles.forEach(apiArticle => {
+      newArticleStatus[apiArticle.id] = mapApiStatusToArticleStatus(apiArticle.status)
+    })
+    setArticleStatus(newArticleStatus)
+  }, [apiArticles])
 
   const handleArticleSelection = (articleId: string) => {
     setSelectedArticles(prev => 
@@ -65,12 +108,36 @@ export const useAppState = () => {
     )
   }
 
-  const setArticleStatusAndCloseDropdown = (articleId: string, status: ArticleStatus) => {
-    setArticleStatus(prev => ({
-      ...prev,
-      [articleId]: status
-    }))
-    setOpenDropdowns(prev => prev.filter(id => id !== articleId))
+  const setArticleStatusAndCloseDropdown = async (articleId: string, status: ArticleStatus) => {
+    const currentStatus = getArticleStatus(articleId)
+    
+    // Check if the status change is allowed
+    if (!isStatusUpdateAllowed(currentStatus, status)) {
+      console.log('Status change not allowed:', { from: currentStatus, to: status })
+      return
+    }
+
+    try {
+      // Call the API to update status
+      await updateArticleStatus(articleId, status)
+      
+      // Update local state only if API call succeeds
+      setArticleStatus(prev => ({
+        ...prev,
+        [articleId]: status
+      }))
+      
+      // Close dropdown
+      setOpenDropdowns(prev => prev.filter(id => id !== articleId))
+      
+      // Optionally refetch data to ensure consistency
+      // Note: You might want to debounce this or only do it periodically
+      // refetch()
+      
+    } catch (error) {
+      console.error('Failed to update article status:', error)
+      // Error is already handled by the useStatusUpdates hook with notifications
+    }
   }
 
   const isArticleInEditMode = (articleId: string): boolean => {
@@ -119,6 +186,11 @@ export const useAppState = () => {
     }))
   }
 
+  // Helper function to check if an article status is loading
+  const isArticleStatusLoading = (articleId: string): boolean => {
+    return statusUpdateState.loading[articleId] || false
+  }
+
   // Close dropdown when clicking outside
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -149,6 +221,8 @@ export const useAppState = () => {
     editingArticles,
     editValues,
     articleData,
+    statusUpdateState,
+    notifications,
     
     // API state
     loading,
@@ -169,6 +243,9 @@ export const useAppState = () => {
     setArticleStatusAndCloseDropdown,
     isArticleInEditMode,
     toggleEditMode,
-    updateEditValue
+    updateEditValue,
+    isArticleStatusLoading,
+    isStatusUpdateAllowed,
+    dismissNotification
   }
 } 

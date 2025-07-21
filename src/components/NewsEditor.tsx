@@ -14,6 +14,8 @@ interface NewsEditorProps {
   editingArticles: string[]
   editValues: Record<string, EditableArticleData>
   filterLoading: boolean
+  isArticleStatusLoading: (articleId: string) => boolean
+  isStatusUpdateAllowed: (currentStatus: ArticleStatus, newStatus: ArticleStatus) => boolean
   onDateRangeChange: (dateRange: DateRange) => void
   onSourceFilterChange: (filter: SourceFilter) => void
   onStatusFilterChange: (filter: StatusFilter) => void
@@ -44,6 +46,8 @@ export const NewsEditor = ({
   editingArticles,
   editValues,
   filterLoading,
+  isArticleStatusLoading,
+  isStatusUpdateAllowed,
   onDateRangeChange,
   onSourceFilterChange,
   onStatusFilterChange,
@@ -105,7 +109,7 @@ export const NewsEditor = ({
           <div style={{ display: 'flex', justifyContent: 'center', padding: '40px' }}>
             <LoadingSpinner message="Filtering articles..." />
           </div>
-        ) : (
+        ) :
           <>
             {sortedSources.map(source => (
               <div key={source} className="source-group">
@@ -128,6 +132,8 @@ export const NewsEditor = ({
                       status={getArticleStatus(article.id)}
                       isDropdownOpen={isDropdownOpen(article.id)}
                       isInEditMode={isArticleInEditMode(article.id)}
+                      isStatusLoading={isArticleStatusLoading(article.id)}
+                      isStatusUpdateAllowed={isStatusUpdateAllowed}
                       editValues={editValues[article.id]}
                       onSelection={onArticleSelection}
                       onStatusToggle={onStatusToggle}
@@ -143,15 +149,15 @@ export const NewsEditor = ({
             {/* Show message if no articles */}
             {articles.length === 0 && (
               <div className="no-articles-message">
-                <div className="no-articles-content">
-                  <span className="no-articles-icon">📰</span>
-                  <p>No articles found for the selected filters.</p>
-                  <p className="no-articles-subtitle">Try adjusting your date range or source filter.</p>
+                <div className="empty-state">
+                  <span className="empty-icon">📄</span>
+                  <h3>No articles found</h3>
+                  <p>Try adjusting your filters or date range to see more articles.</p>
                 </div>
               </div>
             )}
           </>
-        )}
+        }
       </div>
     </>
   )
