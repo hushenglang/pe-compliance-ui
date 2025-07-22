@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useNewsData } from './useNewsData'
 import { useStatusUpdates } from './useStatusUpdates'
+import { apiService } from '../services/api'
 import type { 
   TabType, 
   DateRange, 
@@ -8,6 +9,7 @@ import type {
   StatusFilter, 
   ArticleStatus, 
   EditableArticleData,
+  StatusNotification,
   Article,
   ApiArticle
 } from '../types'
@@ -63,31 +65,65 @@ export const useAppState = () => {
   const [editingArticles, setEditingArticles] = useState<string[]>([])
   const [editValues, setEditValues] = useState<Record<string, EditableArticleData>>({})
   
+  // Content update loading state
+  const [contentUpdateLoading, setContentUpdateLoading] = useState<Record<string, boolean>>({})
+  const [contentUpdateNotifications, setContentUpdateNotifications] = useState<StatusNotification[]>([])
+  
+  // Local state to track updated articles (to avoid unnecessary API calls)
+  const [updatedArticles, setUpdatedArticles] = useState<Record<string, { title?: string; aiSummary?: string }>>({})
+  
   // Use the news data hook for API integration
   const { articles: apiArticles, loading, filterLoading, error, refetch } = useNewsData(dateRange, sourceFilter, statusFilter)
   
   // Use the status updates hook
   const { 
     statusUpdateState, 
-    notifications, 
+    notifications: statusNotifications, 
     updateArticleStatus, 
     isStatusUpdateAllowed, 
-    dismissNotification 
+    dismissNotification: dismissStatusNotification 
   } = useStatusUpdates()
   
-  // Convert API articles to the format expected by existing components
-  // Note: Status filtering is now handled by the API, so we don't need client-side filtering
-  const articleData = apiArticles.map(mapApiArticleToArticle)
+  // Combine all notifications
+  const notifications = [...statusNotifications, ...contentUpdateNotifications]
 
-  // Clear selectedArticles when filters change to ensure accurate count
+  // Convert API articles to the format expected by existing components and merge with local updates
+  const articleData = apiArticles.map(apiArticle => {
+    const mapped = mapApiArticleToArticle(apiArticle)
+    const updates = updatedArticles[mapped.id]
+    
+    if (updates) {
+      return {
+        ...mapped,
+        title: updates.title !== undefined ? updates.title : mapped.title,
+        aiSummary: updates.aiSummary !== undefined ? updates.aiSummary : mapped.aiSummary
+      }
+    }
+    
+    return mapped
+  })
+
+  // Clear selectedArticles and updatedArticles when filters change
   useEffect(() => {
     setSelectedArticles([])
+    setUpdatedArticles({}) // Clear local updates when data changes
   }, [dateRange.startDate, dateRange.endDate, sourceFilter, statusFilter])
 
   // Filter selectedArticles to only include articles that exist in current results
   useEffect(() => {
     const currentArticleIds = new Set(apiArticles.map(article => article.id))
     setSelectedArticles(prev => prev.filter(id => currentArticleIds.has(id)))
+    
+    // Also clean up local updates for articles that are no longer in current view
+    setUpdatedArticles(prev => {
+      const filtered: Record<string, { title?: string; aiSummary?: string }> = {}
+      Object.keys(prev).forEach(id => {
+        if (currentArticleIds.has(id)) {
+          filtered[id] = prev[id]
+        }
+      })
+      return filtered
+    })
   }, [apiArticles])
 
   // Sync article status from API when articles change
@@ -155,17 +191,86 @@ export const useAppState = () => {
     return editingArticles.includes(articleId)
   }
 
-  const toggleEditMode = (articleId: string) => {
+  const addContentUpdateNotification = (message: string, type: 'success' | 'error') => {
+    const notification: StatusNotification = {
+      id: `content-notification-${Date.now()}-${Math.random()}`,
+      message,
+      type,
+      timestamp: Date.now()
+    }
+
+    setContentUpdateNotifications(prev => [...prev, notification])
+
+    // Auto-dismiss notification after 4 seconds
+    setTimeout(() => {
+      setContentUpdateNotifications(prev => prev.filter(n => n.id !== notification.id))
+    }, 4000)
+  }
+
+  const dismissNotification = (notificationId: string) => {
+    // Try to dismiss from both notification arrays
+    dismissStatusNotification(notificationId)
+    setContentUpdateNotifications(prev => prev.filter(n => n.id !== notificationId))
+  }
+
+  const isContentUpdateLoading = (articleId: string): boolean => {
+    return contentUpdateLoading[articleId] || false
+  }
+
+  const toggleEditMode = async (articleId: string) => {
     const isEditing = isArticleInEditMode(articleId)
     
     if (isEditing) {
-      // Save changes - in a real app, this would typically sync back to the API
+      // Save changes - call the API
       const editData = editValues[articleId]
       if (editData) {
-        // For now, we just update local state
-        // In a production app, you'd want to call an API to save changes
-        console.log('Saving changes for article:', articleId, editData)
+        // Set loading state
+        setContentUpdateLoading(prev => ({ ...prev, [articleId]: true }))
+        
+        try {
+          const article = articleData.find(a => a.id === articleId)
+          const originalTitle = article?.title || ''
+          const originalSummary = article?.aiSummary || ''
+          
+          // Only send fields that have actually changed
+          const titleChanged = editData.title !== originalTitle
+          const summaryChanged = editData.aiSummary !== originalSummary
+          
+          if (titleChanged || summaryChanged) {
+            const response = await apiService.updateNewsContent(
+              articleId,
+              titleChanged ? editData.title : undefined,
+              summaryChanged ? editData.aiSummary : undefined
+            )
+            
+            // Update local state instead of refetching
+            setUpdatedArticles(prev => ({
+              ...prev,
+              [articleId]: {
+                ...(titleChanged && { title: editData.title }),
+                ...(summaryChanged && { aiSummary: editData.aiSummary })
+              }
+            }))
+            
+            // Show success notification
+            addContentUpdateNotification(response.message, 'success')
+          }
+        } catch (error) {
+          // Show error notification
+          const errorMessage = error instanceof Error ? error.message : 'Failed to update content'
+          addContentUpdateNotification(errorMessage, 'error')
+          
+          // Clear loading state
+          setContentUpdateLoading(prev => ({ ...prev, [articleId]: false }))
+          
+          // Don't exit edit mode on error
+          return
+        }
+        
+        // Clear loading state
+        setContentUpdateLoading(prev => ({ ...prev, [articleId]: false }))
       }
+      
       // Remove from editing
       setEditingArticles(prev => prev.filter(id => id !== articleId))
       // Clear edit values
@@ -232,7 +337,6 @@ export const useAppState = () => {
     editingArticles,
     editValues,
     articleData,
-    statusUpdateState,
     notifications,
     
     // API state
@@ -256,6 +360,7 @@ export const useAppState = () => {
     toggleEditMode,
     updateEditValue,
     isArticleStatusLoading,
+    isContentUpdateLoading,
     isStatusUpdateAllowed,
     dismissNotification
   }

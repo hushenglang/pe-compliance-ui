@@ -16,6 +16,7 @@ interface NewsEditorProps {
   editValues: Record<string, EditableArticleData>
   filterLoading: boolean
   isArticleStatusLoading: (articleId: string) => boolean
+  isContentUpdateLoading: (articleId: string) => boolean
   isStatusUpdateAllowed: (currentStatus: ArticleStatus, newStatus: ArticleStatus) => boolean
   onDateRangeChange: (dateRange: DateRange) => void
   onSourceFilterChange: (filter: SourceFilter) => void
@@ -40,6 +41,7 @@ export const NewsEditor = ({
   editValues,
   filterLoading,
   isArticleStatusLoading,
+  isContentUpdateLoading,
   isStatusUpdateAllowed,
   onDateRangeChange,
   onSourceFilterChange,
@@ -127,6 +129,7 @@ export const NewsEditor = ({
                       isDropdownOpen={isDropdownOpen(article.id)}
                       isInEditMode={isArticleInEditMode(article.id)}
                       isStatusLoading={isArticleStatusLoading(article.id)}
+                      isContentUpdateLoading={isContentUpdateLoading(article.id)}
                       isStatusUpdateAllowed={isStatusUpdateAllowed}
                       editValues={editValues[article.id]}
                       onSelection={onArticleSelection}

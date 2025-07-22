@@ -36,6 +36,7 @@ function App() {
     toggleEditMode,
     updateEditValue,
     isArticleStatusLoading,
+    isContentUpdateLoading,
     isStatusUpdateAllowed,
     dismissNotification
   } = useAppState()
@@ -109,6 +110,7 @@ function App() {
                 editValues={editValues}
                 filterLoading={filterLoading}
                 isArticleStatusLoading={isArticleStatusLoading}
+                isContentUpdateLoading={isContentUpdateLoading}
                 isStatusUpdateAllowed={isStatusUpdateAllowed}
                 onDateRangeChange={setDateRange}
                 onSourceFilterChange={setSourceFilter}

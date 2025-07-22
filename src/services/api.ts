@@ -1,5 +1,5 @@
 import { API_CONFIG } from '../utils/constants'
-import type { GroupedComplianceNewsResponse } from '../types'
+import type { GroupedComplianceNewsResponse, UpdateTitleAndSummaryRequest, UpdateTitleAndSummaryResponse } from '../types'
 
 export interface ComplianceNewsStatistics {
   source: string
@@ -152,6 +152,39 @@ class ApiService {
       // Handle network errors
       throw new ApiError(
         `Failed to update news status: ${error instanceof Error ? error.message : 'Unknown error'}`
+      )
+    }
+  }
+
+  async updateNewsContent(newsId: string, title?: string, llmSummary?: string): Promise<UpdateTitleAndSummaryResponse> {
+    const url = `${this.baseUrl}${API_CONFIG.ENDPOINTS.UPDATE_CONTENT}/${newsId}`
+    
+    const requestBody: UpdateTitleAndSummaryRequest = {}
+    if (title !== undefined) {
+      requestBody.title = title
+    }
+    if (llmSummary !== undefined) {
+      requestBody.llm_summary = llmSummary
+    }
+    
+    try {
+      const response = await fetch(url, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(requestBody)
+      })
+
+      return this.handleResponse<UpdateTitleAndSummaryResponse>(response)
+    } catch (error) {
+      if (error instanceof ApiError) {
+        throw error
+      }
+      
+      // Handle network errors
+      throw new ApiError(
+        `Failed to update news content: ${error instanceof Error ? error.message : 'Unknown error'}`
       )
     }
   }

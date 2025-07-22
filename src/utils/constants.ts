@@ -50,7 +50,8 @@ export const API_CONFIG = {
   ENDPOINTS: {
     STATISTICS: '/api/news/statistics',
     GROUPED_NEWS: '/api/news/date-range/grouped',
-    UPDATE_STATUS: '/api/news/update-status'
+    UPDATE_STATUS: '/api/news/update-status',
+    UPDATE_CONTENT: '/api/news/update-content'
   }
 } as const
 

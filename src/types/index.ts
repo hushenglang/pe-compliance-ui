@@ -136,4 +136,17 @@ export interface ValidationError {
 export interface ValidationResult {
   isValid: boolean
   errors: ValidationError[]
+}
+
+// Update content types
+export interface UpdateTitleAndSummaryRequest {
+  title?: string
+  llm_summary?: string
+}
+
+export interface UpdateTitleAndSummaryResponse {
+  id: number
+  title: string
+  llm_summary?: string
+  message: string
 } 
