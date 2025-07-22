@@ -1,28 +1,22 @@
 # PE Compliance UI
 
-A modern React-based user interface for PE compliance news monitoring and management. This application provides a clean, professional interface to view and manage compliance news from multiple regulatory sources including HKEX, HKMA, SEC, and SFC.
+A modern React-based user interface for PE compliance news monitoring and management. This application provides a clean, professional interface to view and manage compliance news from multiple regulatory sources including SFC, HKMA, SEC, and HKEX.
 
 ## 🚀 Tech Stack
 
 ### Core Technologies
-- **React 18** with **TypeScript** - Modern React with type safety
+- **React 19** with **TypeScript** - Modern React with type safety
 - **Vite** - Fast build tool and development server
-- **TanStack Ecosystem** - Comprehensive data management solution
-- **Tailwind CSS** - Utility-first styling framework
+- **Tailwind CSS 4** - Utility-first styling framework
+- **CSS Modules** - Component-scoped styling
 
-### TanStack Ecosystem
-- **TanStack Query** - Data fetching, caching, and server state management
-- **TanStack Table** - Powerful data tables with sorting, filtering, and pagination
-- **TanStack Router** - File-based routing system
-- **TanStack Form** - Form handling and validation
-
-### Why This Stack?
-
-✅ **Cohesive Ecosystem** - All TanStack tools work seamlessly together  
-✅ **Performance** - Smart caching, virtual scrolling, minimal bundle size  
-✅ **Developer Experience** - Type-safe, minimal configuration, consistent APIs  
-✅ **Maintainability** - Fewer dependencies, unified patterns  
-✅ **Professional UI** - Tailwind provides clean, responsive design  
+### Key Features
+- **Real-time News Monitoring** - Aggregate compliance news from multiple sources
+- **Interactive News Editor** - Edit, review, and manage news articles
+- **Statistics Dashboard** - Overview of news processing status
+- **Advanced Filtering** - Filter by date range, source, and status
+- **Responsive Design** - Mobile and desktop optimized
+- **Error Handling** - Comprehensive error boundaries and retry mechanisms
 
 ## 🛠 Installation & Setup
 
@@ -33,106 +27,68 @@ A modern React-based user interface for PE compliance news monitoring and manage
 
 ### Quick Start
 
-1. **Create the project**
+1. **Clone and install**
 ```bash
-npm create vite@latest pe-compliance-ui -- --template react-ts
+git clone <repository-url>
 cd pe-compliance-ui
+npm install
 ```
 
-2. **Install core dependencies**
-```bash
-# TanStack ecosystem
-npm install @tanstack/react-query @tanstack/react-table @tanstack/react-router
-
-# Styling
-npm install -D tailwindcss postcss autoprefixer @tailwindcss/forms
-
-# Optional: Form handling
-npm install @tanstack/react-form
-```
-
-3. **Initialize Tailwind CSS**
-```bash
-npx tailwindcss init -p
-```
-
-4. **Start development server**
+2. **Start development server**
 ```bash
 npm run dev
 ```
 
+3. **Open browser**
+Navigate to http://localhost:5173
+
 ## 🔧 Configuration
 
 ### Environment Variables
-Create a `.env.local` file:
+Create a `.env.local` file (optional):
 ```env
 VITE_API_BASE_URL=http://localhost:8000
 VITE_APP_NAME=PE Compliance UI
 ```
 
-### Tailwind Config
-```javascript
-// tailwind.config.js
-export default {
-  content: [
-    "./index.html",
-    "./src/**/*.{js,ts,jsx,tsx}",
-  ],
-  theme: {
-    extend: {
-      colors: {
-        compliance: {
-          primary: '#1e40af',
-          secondary: '#6b7280',
-        }
-      }
-    },
-  },
-  plugins: [
-    require('@tailwindcss/forms'),
-  ],
-}
-```
+### Tailwind Configuration
+The project uses Tailwind CSS 4 with custom configuration in `tailwind.config.js`.
 
 ## 📊 Features
 
+### Core Modules
+
+#### 1. News Summary Dashboard
+- **Statistics Overview** - Total articles to process and processed
+- **Source Breakdown** - Individual statistics for SFC, HKMA, SEC, HKEX
+- **Real-time Updates** - Automatic refresh of statistics
+- **Error Handling** - Graceful fallback with retry functionality
+
+#### 2. News Editor
+- **Article Management** - View, edit, and update news articles
+- **Status Management** - Update article status (Pending → Verified/Discarded)
+- **Content Editing** - Edit titles and AI summaries inline
+- **Bulk Operations** - Select multiple articles for batch operations
+- **Advanced Filtering** - Filter by date range, source, and status
+- **Export Functionality** - Generate reports for selected articles
+
 ### Data Sources
-- **HKEX** - Hong Kong Exchange news and announcements
-- **HKMA** - Hong Kong Monetary Authority updates
-- **SEC** - Securities and Exchange Commission filings
-- **SFC** - Securities and Futures Commission notices
+- **SFC** - Securities and Futures Commission (Hong Kong)
+- **HKMA** - Hong Kong Monetary Authority
+- **SEC** - Securities and Exchange Commission (US)
+- **HKEX** - Hong Kong Exchange
 
-### Core Functionality
-- 📰 Real-time compliance news aggregation
-- 🔍 Advanced search and filtering
-- 📊 Data tables with sorting and pagination
-- 📱 Responsive design for mobile and desktop
-- ⚡ Fast data loading with intelligent caching
-- 🔄 Automatic background updates
-
-## 🏃‍♂️ Development
-
-### Available Scripts
-```bash
-npm run dev          # Start development server
-npm run build        # Build for production
-npm run preview      # Preview production build
-npm run lint         # Run ESLint
-npm run format       # Format code with Prettier
-```
-
-### Development Workflow
-1. Start the backend: `cd pe-compliance-app && python main.py`
-2. Start the frontend: `cd pe-compliance-ui && npm run dev`
-3. Open http://localhost:5173
+### Navigation
+- **Sidebar Navigation** - Clean, professional sidebar with tab switching
+- **Responsive Layout** - Adapts to different screen sizes
+- **Active State Indicators** - Clear visual feedback for current section
 
 ## 🔗 API Integration
 
-The UI connects to the Python backend at `http://localhost:8000` and consumes these endpoints:
+The UI connects to the Python FastAPI backend at `http://localhost:8000` and consumes these endpoints:
 
-### Statistics Endpoint
-- **GET** `/api/news/statistics` - Fetches news statistics by source and status
-- **Response Format**:
+### Statistics API
+- **GET** `/api/news/statistics` - News statistics by source and status
 ```json
 [
   {
@@ -148,23 +104,56 @@ The UI connects to the Python backend at `http://localhost:8000` and consumes th
 ]
 ```
 
-### Status Mapping
-The frontend maps backend statuses to display categories:
-- **To Process**: `PENDING` status
-- **Processed**: `VERIFIED` and `DISCARD` statuses
+### News Data APIs
+- **GET** `/api/news/last7days` - Recent news from all sources
+- **GET** `/api/news/date-range/grouped` - Grouped news by date range and filters
+- **POST** `/api/news/today` - Fetch and persist today's news
+- **POST** `/api/news/date/{date}` - Fetch news for specific date
 
-### Implementation Details
-- **API Service**: `src/services/api.ts` - Handles HTTP requests and error handling
-- **Statistics Hook**: `src/hooks/useStatistics.ts` - Manages statistics data fetching and state
-- **Real-time Updates**: News summary automatically fetches latest statistics on load
-- **Error Handling**: Graceful fallback to mock data with retry functionality
-- **Loading States**: Displays loading spinner during API calls
+### Content Management APIs
+- **PUT** `/api/news/update-status/{news_id}` - Update article status
+- **PUT** `/api/news/update-content/{news_id}` - Update article title and summary
 
-- `GET /health` - Health check
-- `GET /news/hkex` - HKEX news data
-- `GET /news/hkma` - HKMA news data  
-- `GET /news/sec` - SEC news data
-- `GET /news/sfc` - SFC news data
+### Health Check
+- **GET** `/health` - Backend health status
+
+## 🏃‍♂️ Development
+
+### Available Scripts
+```bash
+npm run dev          # Start development server
+npm run build        # Build for production
+npm run lint         # Run ESLint
+npm run preview      # Preview production build
+npm run deploy       # Deploy to GitHub Pages
+```
+
+### Development Workflow
+1. Start the backend: `cd pe-compliance-app && python main.py`
+2. Start the frontend: `cd pe-compliance-ui && npm run dev`
+3. Open http://localhost:5173
+
+### Project Structure
+```
+src/
+├── components/          # React components
+│   ├── Sidebar/        # Navigation sidebar
+│   ├── NewsSourceCard/ # Statistics cards
+│   ├── ArticleItem.tsx # Individual article component
+│   ├── FilterControls.tsx # Filtering interface
+│   ├── NewsSummary.tsx # Dashboard overview
+│   └── NewsEditor.tsx  # Article management interface
+├── hooks/              # Custom React hooks
+│   ├── useAppState.ts  # Global application state
+│   ├── useNewsData.ts  # News data fetching
+│   ├── useStatistics.ts # Statistics data
+│   └── useStatusUpdates.ts # Status update logic
+├── services/           # API integration
+│   └── api.ts         # HTTP client and error handling
+├── types/             # TypeScript type definitions
+├── utils/             # Utility functions and constants
+└── styles/            # Global styles and CSS modules
+```
 
 ## 🎨 Design System
 
@@ -175,19 +164,45 @@ The frontend maps backend statuses to display categories:
 - **Warning**: Amber (#d97706) - Attention needed
 - **Error**: Red (#dc2626) - Critical issues
 
-### Typography
-- **Headings**: Inter font family, various weights
-- **Body**: Inter font family, regular weight
-- **Code**: JetBrains Mono for technical content
+### Components
+- **Sidebar Navigation** - Clean, modern sidebar with active states
+- **Article Cards** - Comprehensive article display with inline editing
+- **Filter Controls** - Advanced filtering with date ranges and dropdowns
+- **Status Dropdowns** - Interactive status management
+- **Loading States** - Consistent loading indicators
+- **Error Boundaries** - Graceful error handling
+
+## 🔄 State Management
+
+### Custom Hooks Architecture
+- **useAppState** - Central state management for the entire application
+- **useNewsData** - Handles news data fetching and filtering
+- **useStatistics** - Manages statistics data and updates
+- **useStatusUpdates** - Handles article status changes and notifications
+- **useLocalStorage** - Persistent local storage management
+
+### Status Flow
+```
+Pending → Verified ✅
+Pending → Discarded ❌
+Verified ↔ Discarded (bidirectional)
+```
 
 ## 🚀 Deployment
 
-### Build for Production
+### GitHub Pages Deployment
+```bash
+npm run deploy
+```
+
+The app is configured for deployment to GitHub Pages with the homepage set to: `https://hushenglang.github.io/pe-compliance-ui`
+
+### Production Build
 ```bash
 npm run build
 ```
 
-### Docker Deployment
+### Docker Deployment (Example)
 ```dockerfile
 FROM node:18-alpine AS builder
 WORKDIR /app
@@ -202,13 +217,53 @@ EXPOSE 80
 CMD ["nginx", "-g", "daemon off;"]
 ```
 
+## 📱 Responsive Design
+
+The application is fully responsive and optimized for:
+- **Desktop** - Full feature set with sidebar navigation
+- **Tablet** - Adapted layout with touch-friendly controls
+- **Mobile** - Optimized for small screens with collapsible navigation
+
+## 🔒 Error Handling
+
+### Error Boundary
+- Global error boundary catches and displays React errors
+- Graceful fallback UI with error reporting
+
+### API Error Handling
+- Automatic retry mechanisms for failed requests
+- User-friendly error messages
+- Fallback to mock data when API is unavailable
+
+### Loading States
+- Consistent loading indicators across the application
+- Skeleton loading for better user experience
+- Filter-specific loading states
+
+## 📈 Performance
+
+### Optimization Features
+- **React 19** - Latest React features and optimizations
+- **Vite** - Fast build tool with hot module replacement
+- **Code Splitting** - Optimized bundle sizes
+- **Memoization** - Prevents unnecessary re-renders
+- **Efficient State Management** - Minimal state updates
+
 ## 📝 Contributing
 
-1. Follow the existing code style
-2. Use TypeScript for all new code
-3. Add proper type definitions
+1. Follow the existing code style and TypeScript conventions
+2. Use the established component architecture
+3. Add proper type definitions for all new code
 4. Test components before committing
 5. Follow the established folder structure
+6. Use CSS modules for component-specific styles
+
+## 🎯 Target Users
+
+- **Compliance Officers** - Monitor and review regulatory news
+- **Legal Teams** - Assess regulatory impact on business operations
+- **Risk Management** - Stay informed about regulatory changes
+- **Investment Teams** - Track regulatory developments affecting investments
 
 ## 📄 License
 
@@ -217,81 +272,6 @@ This project is for internal PE compliance monitoring use.
 ---
 
 **Backend Repository**: `pe-compliance-app`  
-**Tech Stack**: React + TanStack + Tailwind  
-**Target Users**: Compliance officers and regulatory teams
-
-
-
-
-
-
-
-# React + TypeScript + Vite
-
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
-
-Currently, two official plugins are available:
-
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
-
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
-
-```js
-export default tseslint.config([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      ...tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      ...tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      ...tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
-
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
-
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default tseslint.config([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+**Frontend Stack**: React 19 + TypeScript + Vite + Tailwind CSS 4  
+**Deployment**: GitHub Pages  
+**API**: FastAPI Python backend
