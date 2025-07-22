@@ -28,15 +28,13 @@ jobs:
       with:
         node-version: '18'
         cache: 'npm'
-        cache-dependency-path: '**/package-lock.json'
+        cache-dependency-path: 'package-lock.json'
         
     - name: Install dependencies
       run: npm ci
-      working-directory: ./pe-compliance-ui
         
     - name: Build
       run: npm run build
-      working-directory: ./pe-compliance-ui
         
     - name: Setup Pages
       uses: actions/configure-pages@v4
@@ -44,7 +42,7 @@ jobs:
     - name: Upload artifact
       uses: actions/upload-pages-artifact@v3
       with:
-        path: ./pe-compliance-ui/dist
+        path: ./dist
 
   deploy:
     environment:
