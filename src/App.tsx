@@ -1,5 +1,7 @@
-import { Sidebar, NewsSummary, NewsEditor, LoadingSpinner, NotificationContainer } from './components'
+import { Sidebar, NewsSummary, NewsEditor, LoadingSpinner, NotificationContainer, EmailReportModal } from './components'
 import { useAppState } from './hooks/useAppState'
+import { apiService } from './services/api'
+import { useState } from 'react'
 import './App.css'
 
 function App() {
@@ -41,10 +43,54 @@ function App() {
     dismissNotification
   } = useAppState()
 
-  const handleGenerateReport = () => {
-    // TODO: Implement email report generation
-    console.log('Generating report for articles:', selectedArticles)
-    alert(`Generating email report for ${selectedArticles.length} selected articles`)
+  // Email report modal state
+  const [emailModalState, setEmailModalState] = useState({
+    isOpen: false,
+    loading: false,
+    htmlContent: '',
+    error: ''
+  })
+
+  const handleGenerateReport = async () => {
+    if (selectedArticles.length === 0) {
+      alert('Please select at least one article to generate a report.')
+      return
+    }
+
+    // Convert string IDs to numbers for the API
+    const newsIds = selectedArticles.map(id => parseInt(id, 10))
+
+    setEmailModalState({
+      isOpen: true,
+      loading: true,
+      htmlContent: '',
+      error: ''
+    })
+
+    try {
+      const htmlContent = await apiService.getHtmlEmailByIds(newsIds)
+      setEmailModalState(prev => ({
+        ...prev,
+        loading: false,
+        htmlContent
+      }))
+    } catch (error) {
+      console.error('Error generating email report:', error)
+      setEmailModalState(prev => ({
+        ...prev,
+        loading: false,
+        error: error instanceof Error ? error.message : 'Failed to generate email report'
+      }))
+    }
+  }
+
+  const closeEmailModal = () => {
+    setEmailModalState({
+      isOpen: false,
+      loading: false,
+      htmlContent: '',
+      error: ''
+    })
   }
 
   return (
@@ -131,6 +177,16 @@ function App() {
       <NotificationContainer 
         notifications={notifications}
         onDismiss={dismissNotification}
+      />
+
+      {/* Email Report Modal */}
+      <EmailReportModal
+        isOpen={emailModalState.isOpen}
+        onClose={closeEmailModal}
+        htmlContent={emailModalState.htmlContent}
+        selectedCount={selectedArticles.length}
+        isLoading={emailModalState.loading}
+        error={emailModalState.error}
       />
     </div>
   )

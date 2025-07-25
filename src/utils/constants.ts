@@ -51,7 +51,8 @@ export const API_CONFIG = {
     STATISTICS: '/api/news/statistics',
     GROUPED_NEWS: '/api/news/date-range/grouped',
     UPDATE_STATUS: '/api/news/update-status',
-    UPDATE_CONTENT: '/api/news/update-content'
+    UPDATE_CONTENT: '/api/news/update-content',
+    HTML_EMAIL_BY_IDS: '/api/news/html-email/by-ids'
   }
 } as const
 

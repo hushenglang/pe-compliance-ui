@@ -188,6 +188,31 @@ class ApiService {
       )
     }
   }
+
+  async getHtmlEmailByIds(newsIds: number[]): Promise<string> {
+    const url = `${this.baseUrl}${API_CONFIG.ENDPOINTS.HTML_EMAIL_BY_IDS}`
+    
+    try {
+      const response = await fetch(url, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(newsIds)
+      })
+
+      return this.handleResponse<string>(response)
+    } catch (error) {
+      if (error instanceof ApiError) {
+        throw error
+      }
+      
+      // Handle network errors
+      throw new ApiError(
+        `Failed to generate HTML email: ${error instanceof Error ? error.message : 'Unknown error'}`
+      )
+    }
+  }
 }
 
 export const apiService = new ApiService() 
