@@ -22,6 +22,10 @@ interface NewsEditorProps {
   onSourceFilterChange: (filter: SourceFilter) => void
   onStatusFilterChange: (filter: StatusFilter) => void
   onArticleSelection: (articleId: string) => void
+  onSelectAllArticles: () => void
+  onUnselectAllArticles: () => void
+  isAllArticlesSelected: () => boolean
+  isSomeArticlesSelected: () => boolean
   onStatusToggle: (articleId: string) => void
   onStatusChange: (articleId: string, status: ArticleStatus) => void
   onEditToggle: (articleId: string) => void
@@ -47,6 +51,10 @@ export const NewsEditor = ({
   onSourceFilterChange,
   onStatusFilterChange,
   onArticleSelection,
+  onSelectAllArticles,
+  onUnselectAllArticles,
+  isAllArticlesSelected,
+  isSomeArticlesSelected,
   onStatusToggle,
   onStatusChange,
   onEditToggle,
@@ -92,9 +100,13 @@ export const NewsEditor = ({
           selectedCount={selectedArticles.length}
           totalCount={articles.length}
           filterLoading={filterLoading}
+          isAllArticlesSelected={isAllArticlesSelected()}
+          isSomeArticlesSelected={isSomeArticlesSelected()}
           onDateRangeChange={onDateRangeChange}
           onSourceFilterChange={onSourceFilterChange}
           onStatusFilterChange={onStatusFilterChange}
+          onSelectAllArticles={onSelectAllArticles}
+          onUnselectAllArticles={onUnselectAllArticles}
           onGenerateReport={onGenerateReport}
         />
       </div>

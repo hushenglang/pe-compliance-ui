@@ -7,9 +7,13 @@ interface FilterControlsProps {
   selectedCount: number
   totalCount: number
   filterLoading?: boolean
+  isAllArticlesSelected: boolean
+  isSomeArticlesSelected: boolean
   onDateRangeChange: (dateRange: DateRange) => void
   onSourceFilterChange: (filter: SourceFilter) => void
   onStatusFilterChange: (filter: StatusFilter) => void
+  onSelectAllArticles: () => void
+  onUnselectAllArticles: () => void
   onGenerateReport: () => void
 }
 
@@ -20,9 +24,13 @@ export const FilterControls = ({
   selectedCount,
   totalCount,
   filterLoading = false,
+  isAllArticlesSelected,
+  isSomeArticlesSelected,
   onDateRangeChange,
   onSourceFilterChange,
   onStatusFilterChange,
+  onSelectAllArticles,
+  onUnselectAllArticles,
   onGenerateReport
 }: FilterControlsProps) => {
   const handleStartDateChange = (value: string) => {
@@ -96,6 +104,27 @@ export const FilterControls = ({
         </div>
         
         <div className="action-controls">
+          <div className="select-all-control">
+            <input
+              type="checkbox"
+              id="select-all-checkbox"
+              checked={isAllArticlesSelected}
+              ref={(input) => {
+                if (input) input.indeterminate = isSomeArticlesSelected
+              }}
+              onChange={() => {
+                if (isAllArticlesSelected) {
+                  onUnselectAllArticles()
+                } else {
+                  onSelectAllArticles()
+                }
+              }}
+              aria-label="Select all articles"
+            />
+            <label htmlFor="select-all-checkbox" className="select-all-label">
+              Select All
+            </label>
+          </div>
           <span className="selected-count">Selected: {selectedCount} of {totalCount} items</span>
           <button 
             className="email-report-btn" 

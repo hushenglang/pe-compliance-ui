@@ -54,11 +54,39 @@ export const EmailReportModal: React.FC<EmailReportModalProps> = ({
 
   const handleCopyToClipboard = async () => {
     try {
-      await navigator.clipboard.writeText(htmlContent)
+      // Get the rendered HTML content from the email preview element
+      const emailPreviewElement = document.querySelector('.email-preview') as HTMLElement
+      if (!emailPreviewElement) {
+        throw new Error('Email preview element not found')
+      }
+      
+      // Get both HTML content (with formatting) and plain text fallback
+      const htmlContent = emailPreviewElement.innerHTML
+      const textContent = emailPreviewElement.innerText || emailPreviewElement.textContent || ''
+      
+      // Create clipboard items with both HTML and plain text formats
+      const clipboardItems = [
+        new ClipboardItem({
+          'text/html': new Blob([htmlContent], { type: 'text/html' }),
+          'text/plain': new Blob([textContent], { type: 'text/plain' })
+        })
+      ]
+      
+      await navigator.clipboard.write(clipboardItems)
       setCopyStatus({ message: 'Copied!', type: 'success' })
     } catch (err) {
-      console.error('Failed to copy to clipboard:', err)
-      setCopyStatus({ message: 'Copy failed', type: 'error' })
+      console.error('Failed to copy rich content, falling back to plain text:', err)
+      
+      // Fallback to plain text if rich content copying fails
+      try {
+        const emailPreviewElement = document.querySelector('.email-preview') as HTMLElement
+        const textContent = emailPreviewElement?.innerText || emailPreviewElement?.textContent || htmlContent
+        await navigator.clipboard.writeText(textContent)
+        setCopyStatus({ message: 'Copied!', type: 'success' })
+      } catch (fallbackErr) {
+        console.error('Failed to copy to clipboard:', fallbackErr)
+        setCopyStatus({ message: 'Copy failed', type: 'error' })
+      }
     }
 
     // Auto-hide the status message after 2 seconds

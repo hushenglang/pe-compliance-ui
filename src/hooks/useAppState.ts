@@ -143,6 +143,23 @@ export const useAppState = () => {
     )
   }
 
+  const handleSelectAllArticles = () => {
+    const allArticleIds = articleData.map(article => article.id)
+    setSelectedArticles(allArticleIds)
+  }
+
+  const handleUnselectAllArticles = () => {
+    setSelectedArticles([])
+  }
+
+  const isAllArticlesSelected = () => {
+    return articleData.length > 0 && selectedArticles.length === articleData.length
+  }
+
+  const isSomeArticlesSelected = () => {
+    return selectedArticles.length > 0 && selectedArticles.length < articleData.length
+  }
+
   const getArticleStatus = (articleId: string): ArticleStatus => {
     return articleStatus[articleId] || 'pending'
   }
@@ -353,6 +370,10 @@ export const useAppState = () => {
     
     // Computed/Actions
     handleArticleSelection,
+    handleSelectAllArticles,
+    handleUnselectAllArticles,
+    isAllArticlesSelected,
+    isSomeArticlesSelected,
     getArticleStatus,
     toggleDropdown,
     setArticleStatusAndCloseDropdown,

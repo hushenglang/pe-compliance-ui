@@ -33,6 +33,10 @@ function App() {
     
     // Actions
     handleArticleSelection,
+    handleSelectAllArticles,
+    handleUnselectAllArticles,
+    isAllArticlesSelected,
+    isSomeArticlesSelected,
     toggleDropdown,
     setArticleStatusAndCloseDropdown,
     toggleEditMode,
@@ -162,6 +166,10 @@ function App() {
                 onSourceFilterChange={setSourceFilter}
                 onStatusFilterChange={setStatusFilter}
                 onArticleSelection={handleArticleSelection}
+                onSelectAllArticles={handleSelectAllArticles}
+                onUnselectAllArticles={handleUnselectAllArticles}
+                isAllArticlesSelected={isAllArticlesSelected}
+                isSomeArticlesSelected={isSomeArticlesSelected}
                 onStatusToggle={toggleDropdown}
                 onStatusChange={setArticleStatusAndCloseDropdown}
                 onEditToggle={toggleEditMode}

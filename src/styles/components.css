@@ -178,7 +178,7 @@ button:focus {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 1.5rem;
+  padding: 1rem 1.5rem;
   border-bottom: 1px solid #e5e7eb;
   background-color: #f9fafb;
 }
