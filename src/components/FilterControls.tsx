@@ -122,7 +122,7 @@ export const FilterControls = ({
               aria-label="Select all articles"
             />
             <label htmlFor="select-all-checkbox" className="select-all-label">
-              Select All
+              All
             </label>
           </div>
           <span className="selected-count">Selected: {selectedCount} of {totalCount} items</span>
