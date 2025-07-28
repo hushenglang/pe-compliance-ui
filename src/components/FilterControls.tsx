@@ -104,34 +104,36 @@ export const FilterControls = ({
         </div>
         
         <div className="action-controls">
-          <div className="select-all-control">
-            <input
-              type="checkbox"
-              id="select-all-checkbox"
-              checked={isAllArticlesSelected}
-              ref={(input) => {
-                if (input) input.indeterminate = isSomeArticlesSelected
-              }}
-              onChange={() => {
-                if (isAllArticlesSelected) {
-                  onUnselectAllArticles()
-                } else {
-                  onSelectAllArticles()
-                }
-              }}
-              aria-label="Select all articles"
-            />
-            <label htmlFor="select-all-checkbox" className="select-all-label">
-              All
-            </label>
+          <div className="select-count-column">
+            <div className="select-all-control">
+              <input
+                type="checkbox"
+                id="select-all-checkbox"
+                checked={isAllArticlesSelected}
+                ref={(input) => {
+                  if (input) input.indeterminate = isSomeArticlesSelected
+                }}
+                onChange={() => {
+                  if (isAllArticlesSelected) {
+                    onUnselectAllArticles()
+                  } else {
+                    onSelectAllArticles()
+                  }
+                }}
+                aria-label="Select all articles"
+              />
+              <label htmlFor="select-all-checkbox" className="select-all-label">
+                Select All
+              </label>
+            </div>
+            <span className="selected-count">Selected: {selectedCount} of {totalCount} items</span>
           </div>
-          <span className="selected-count">Selected: {selectedCount} of {totalCount} items</span>
           <button 
             className="email-report-btn" 
             disabled={selectedCount === 0 || filterLoading}
             onClick={onGenerateReport}
           >
-            📧 Generate Email Report
+            📧 Generate Report
           </button>
         </div>
       </div>
