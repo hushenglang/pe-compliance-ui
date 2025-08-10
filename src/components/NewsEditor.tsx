@@ -31,6 +31,7 @@ interface NewsEditorProps {
   onEditToggle: (articleId: string) => void
   onEditValueChange: (articleId: string, field: 'title' | 'aiSummary', value: string) => void
   onGenerateReport: () => void
+  onRefresh: () => void
 }
 
 export const NewsEditor = ({
@@ -59,7 +60,8 @@ export const NewsEditor = ({
   onStatusChange,
   onEditToggle,
   onEditValueChange,
-  onGenerateReport
+  onGenerateReport,
+  onRefresh
 }: NewsEditorProps) => {
   const getArticleStatus = (articleId: string): ArticleStatus => {
     return articleStatus[articleId] || 'pending'
@@ -108,6 +110,7 @@ export const NewsEditor = ({
           onSelectAllArticles={onSelectAllArticles}
           onUnselectAllArticles={onUnselectAllArticles}
           onGenerateReport={onGenerateReport}
+          onRefresh={onRefresh}
         />
       </div>
 

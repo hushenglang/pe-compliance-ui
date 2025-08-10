@@ -73,7 +73,7 @@ export const useAppState = () => {
   const [updatedArticles, setUpdatedArticles] = useState<Record<string, { title?: string; aiSummary?: string }>>({})
   
   // Use the news data hook for API integration
-  const { articles: apiArticles, loading, filterLoading, error, refetch } = useNewsData(dateRange, sourceFilter, statusFilter)
+  const { articles: apiArticles, loading, filterLoading, error, refetch, refresh } = useNewsData(dateRange, sourceFilter, statusFilter)
   
   // Use the status updates hook
   const { 
@@ -361,6 +361,7 @@ export const useAppState = () => {
     filterLoading,
     error,
     refetch,
+    refresh,
     
     // Setters
     setActiveTab,

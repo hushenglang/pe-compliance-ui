@@ -12,6 +12,7 @@ interface FilterControlsProps {
   onDateRangeChange: (dateRange: DateRange) => void
   onSourceFilterChange: (filter: SourceFilter) => void
   onStatusFilterChange: (filter: StatusFilter) => void
+  onRefresh: () => void
   onSelectAllArticles: () => void
   onUnselectAllArticles: () => void
   onGenerateReport: () => void
@@ -29,6 +30,7 @@ export const FilterControls = ({
   onDateRangeChange,
   onSourceFilterChange,
   onStatusFilterChange,
+  onRefresh,
   onSelectAllArticles,
   onUnselectAllArticles,
   onGenerateReport
@@ -92,15 +94,38 @@ export const FilterControls = ({
         </div>
         
         <div className="filter-group">
-          <select 
-            value={statusFilter} 
-            onChange={(e) => onStatusFilterChange(e.target.value as StatusFilter)}
-          >
-            <option value="all-statuses">All Statuses</option>
-            <option value="pending">Pending</option>
-            <option value="verified">Verified</option>
-            <option value="discarded">Discarded</option>
-          </select>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <select
+              value={statusFilter}
+              onChange={(e) => onStatusFilterChange(e.target.value as StatusFilter)}
+            >
+              <option value="all-statuses">All Statuses</option>
+              <option value="pending">Pending</option>
+              <option value="verified">Verified</option>
+              <option value="discarded">Discarded</option>
+            </select>
+            <button
+              type="button"
+              aria-label="Refresh data"
+              title="Refresh data"
+              onClick={onRefresh}
+              disabled={!!filterLoading}
+              style={{
+                width: '36px',
+                height: '36px',
+                display: 'inline-flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                borderRadius: '6px',
+                border: '1px solid #d1d5db',
+                backgroundColor: '#ffffff',
+                cursor: filterLoading ? 'not-allowed' : 'pointer',
+                opacity: filterLoading ? 0.6 : 1
+              }}
+            >
+              <span role="img" aria-hidden="true">🔄</span>
+            </button>
+          </div>
         </div>
         
         <div className="action-controls">

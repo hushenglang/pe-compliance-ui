@@ -82,6 +82,7 @@ export interface UseNewsDataResult {
   filterLoading: boolean
   error: string | null
   refetch: () => Promise<void>
+  refresh: () => Promise<void>
 }
 
 export const useNewsData = (dateRange: DateRange, sourceFilter: SourceFilter, statusFilter: StatusFilter): UseNewsDataResult => {
@@ -131,7 +132,14 @@ export const useNewsData = (dateRange: DateRange, sourceFilter: SourceFilter, st
   }, [fetchNews])
 
   const refetch = useCallback(async () => {
+    // Force a full reload state
     setIsInitialLoad(true)
+    await fetchNews()
+  }, [fetchNews])
+
+  const refresh = useCallback(async () => {
+    // Soft refresh using filter loading state
+    setIsInitialLoad(false)
     await fetchNews()
   }, [fetchNews])
 
@@ -140,6 +148,7 @@ export const useNewsData = (dateRange: DateRange, sourceFilter: SourceFilter, st
     loading,
     filterLoading,
     error,
-    refetch
+    refetch,
+    refresh
   }
 } 

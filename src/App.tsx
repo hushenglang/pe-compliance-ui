@@ -24,6 +24,7 @@ function App() {
     filterLoading,
     error,
     refetch,
+    refresh,
     
     // Setters
     setActiveTab,
@@ -175,6 +176,7 @@ function App() {
                 onEditToggle={toggleEditMode}
                 onEditValueChange={updateEditValue}
                 onGenerateReport={handleGenerateReport}
+                onRefresh={refresh}
               />
             )}
           </>
