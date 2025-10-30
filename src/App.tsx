@@ -1,5 +1,6 @@
 import { Sidebar, NewsSummary, NewsEditor, LoadingSpinner, NotificationContainer, EmailReportModal } from './components'
 import { useAppState } from './hooks/useAppState'
+import { convertToSimplifiedChinese } from './utils/chineseConverter'
 import { apiService } from './services/api'
 import { useState } from 'react'
 import './App.css'
@@ -42,6 +43,7 @@ function App() {
     setArticleStatusAndCloseDropdown,
     toggleEditMode,
     updateEditValue,
+    updateArticleLocally,
     isArticleStatusLoading,
     isContentUpdateLoading,
     isStatusUpdateAllowed,
@@ -96,6 +98,22 @@ function App() {
       htmlContent: '',
       error: ''
     })
+  }
+
+  const handleConvertToSimplifiedChinese = (articleId: string) => {
+    // Find the article
+    const article = articleData.find(a => a.id === articleId)
+    if (!article) {
+      console.error('Article not found:', articleId)
+      return
+    }
+
+    // Convert title and summary to simplified Chinese
+    const convertedTitle = convertToSimplifiedChinese(article.title)
+    const convertedSummary = convertToSimplifiedChinese(article.aiSummary)
+
+    // Update the article locally (no API call, UI only)
+    updateArticleLocally(articleId, convertedTitle, convertedSummary)
   }
 
   return (
@@ -175,6 +193,7 @@ function App() {
                 onStatusChange={setArticleStatusAndCloseDropdown}
                 onEditToggle={toggleEditMode}
                 onEditValueChange={updateEditValue}
+                onConvertToSimplifiedChinese={handleConvertToSimplifiedChinese}
                 onGenerateReport={handleGenerateReport}
                 onRefresh={refresh}
               />

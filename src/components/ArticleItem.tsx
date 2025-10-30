@@ -17,6 +17,7 @@ interface ArticleItemProps {
   onStatusChange: (articleId: string, status: ArticleStatus) => void
   onEditToggle: (articleId: string) => void
   onEditValueChange: (articleId: string, field: 'title' | 'aiSummary', value: string) => void
+  onConvertToSimplifiedChinese: (articleId: string) => void
 }
 
 export const ArticleItem = ({
@@ -33,7 +34,8 @@ export const ArticleItem = ({
   onStatusToggle,
   onStatusChange,
   onEditToggle,
-  onEditValueChange
+  onEditValueChange,
+  onConvertToSimplifiedChinese
 }: ArticleItemProps) => {
   const handleViewOriginal = () => {
     if (article.contentUrl) {
@@ -86,6 +88,7 @@ export const ArticleItem = ({
           onEditToggle={onEditToggle}
           onStatusToggle={onStatusToggle}
           onStatusChange={onStatusChange}
+          onConvertToSimplifiedChinese={onConvertToSimplifiedChinese}
         />
       </div>
     </div>

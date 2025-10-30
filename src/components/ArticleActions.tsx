@@ -16,6 +16,7 @@ interface ArticleActionsProps {
   onEditToggle: (articleId: string) => void
   onStatusToggle: (articleId: string) => void
   onStatusChange: (articleId: string, status: ArticleStatus) => void
+  onConvertToSimplifiedChinese: (articleId: string) => void
 }
 
 export const ArticleActions = ({
@@ -31,7 +32,8 @@ export const ArticleActions = ({
   onViewOriginal,
   onEditToggle,
   onStatusToggle,
-  onStatusChange
+  onStatusChange,
+  onConvertToSimplifiedChinese
 }: ArticleActionsProps) => {
   return (
     <div className="article-actions" style={{ 
@@ -117,6 +119,48 @@ export const ArticleActions = ({
               ? 'Save' 
               : 'Edit'
           }
+        </button>
+        
+        <button 
+          className="convert-btn"
+          onClick={() => onConvertToSimplifiedChinese(articleId)}
+          disabled={isInEditMode || isContentUpdateLoading}
+          title={
+            isInEditMode 
+              ? 'Exit edit mode to convert' 
+              : 'Convert to Simplified Chinese'
+          }
+          style={{
+            minWidth: '90px',
+            padding: '8px 16px',
+            backgroundColor: (isInEditMode || isContentUpdateLoading) 
+              ? '#9ca3af' 
+              : '#3b82f6',
+            color: 'white',
+            border: 'none',
+            borderRadius: '6px',
+            fontSize: '14px',
+            fontWeight: '500',
+            cursor: (isInEditMode || isContentUpdateLoading) ? 'not-allowed' : 'pointer',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            gap: '6px',
+            opacity: (isInEditMode || isContentUpdateLoading) ? 0.5 : 1,
+            transition: 'background-color 0.2s'
+          }}
+          onMouseEnter={(e) => {
+            if (!isInEditMode && !isContentUpdateLoading) {
+              e.currentTarget.style.backgroundColor = '#2563eb'
+            }
+          }}
+          onMouseLeave={(e) => {
+            if (!isInEditMode && !isContentUpdateLoading) {
+              e.currentTarget.style.backgroundColor = '#3b82f6'
+            }
+          }}
+        >
+          🈹 简体
         </button>
         
         <ArticleStatusDropdown

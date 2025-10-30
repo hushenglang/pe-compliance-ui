@@ -319,6 +319,16 @@ export const useAppState = () => {
     }))
   }
 
+  const updateArticleLocally = (articleId: string, title?: string, aiSummary?: string) => {
+    setUpdatedArticles(prev => ({
+      ...prev,
+      [articleId]: {
+        ...(title !== undefined && { title }),
+        ...(aiSummary !== undefined && { aiSummary })
+      }
+    }))
+  }
+
   // Helper function to check if an article status is loading
   const isArticleStatusLoading = (articleId: string): boolean => {
     return statusUpdateState.loading[articleId] || false
@@ -381,6 +391,7 @@ export const useAppState = () => {
     isArticleInEditMode,
     toggleEditMode,
     updateEditValue,
+    updateArticleLocally,
     isArticleStatusLoading,
     isContentUpdateLoading,
     isStatusUpdateAllowed,

@@ -30,6 +30,7 @@ interface NewsEditorProps {
   onStatusChange: (articleId: string, status: ArticleStatus) => void
   onEditToggle: (articleId: string) => void
   onEditValueChange: (articleId: string, field: 'title' | 'aiSummary', value: string) => void
+  onConvertToSimplifiedChinese: (articleId: string) => void
   onGenerateReport: () => void
   onRefresh: () => void
 }
@@ -60,6 +61,7 @@ export const NewsEditor = ({
   onStatusChange,
   onEditToggle,
   onEditValueChange,
+  onConvertToSimplifiedChinese,
   onGenerateReport,
   onRefresh
 }: NewsEditorProps) => {
@@ -152,6 +154,7 @@ export const NewsEditor = ({
                       onStatusChange={onStatusChange}
                       onEditToggle={onEditToggle}
                       onEditValueChange={onEditValueChange}
+                      onConvertToSimplifiedChinese={onConvertToSimplifiedChinese}
                     />
                   ))}
                 </div>
